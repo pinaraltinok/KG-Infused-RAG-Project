@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SocialRAG Tester</title>
+    <style>
+      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; max-width: 1100px; }
+      .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+      label { display: block; font-size: 12px; color: #333; margin-bottom: 6px; }
+      input, select, textarea, button { font: inherit; }
+      textarea { width: 100%; min-height: 90px; padding: 10px; }
+      select, input { padding: 8px; }
+      button { padding: 10px 14px; cursor: pointer; }
+      .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-top: 14px; }
+      pre { white-space: pre-wrap; word-break: break-word; background: #0b1020; color: #e7e7e7; padding: 12px; border-radius: 10px; overflow: auto; }
+      .muted { color: #666; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h2>SocialRAG – Query Tester</h2>
+    <div class="muted">Test all three modes: KG-RAG, Vanilla RAG, No Retrieval. Output language is forced to Turkish if the question is Turkish (otherwise English).</div>
+
+    <div class="card">
+      <label for="q">Question</label>
+      <textarea id="q">Türkiye Kupası hangi spor dalıdır?</textarea>
+
+      <div class="row" style="margin-top: 10px;">
+        <div>
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="kg_rag">kg_rag</option>
+            <option value="vanilla_rag">vanilla_rag</option>
+            <option value="no_retrieval">no_retrieval</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="llm">LLM</label>
+          <select id="llm">
+            <option value="ollama">ollama</option>
+            <option value="gemini">gemini</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="domain">Domain (optional)</label>
+          <select id="domain">
+            <option value="">(none)</option>
+            <option value="cinema">cinema</option>
+            <option value="football">football</option>
+            <option value="company">company</option>
+            <option value="music">music</option>
+            <option value="academia">academia</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="rounds">Rounds</label>
+          <input id="rounds" type="number" value="3" min="1" max="6" />
+        </div>
+        <div>
+          <label for="seed_k">Seed k</label>
+          <input id="seed_k" type="number" value="5" min="1" max="20" />
+        </div>
+        <div>
+          <label for="entities_per_round">Entities/round</label>
+          <input id="entities_per_round" type="number" value="10" min="1" max="50" />
+        </div>
+        <div>
+          <label for="wiki_lang">Wiki lang</label>
+          <select id="wiki_lang">
+            <option value="tr">tr</option>
+            <option value="en">en</option>
+          </select>
+        </div>
+        <div>
+          <label for="passage_k">Passages</label>
+          <input id="passage_k" type="number" value="8" min="2" max="20" />
+        </div>
+
+        <button id="run">Run</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content: space-between;">
+        <div><strong>Result</strong></div>
+        <div class="muted" id="status"></div>
+      </div>
+      <pre id="out"></pre>
+    </div>
+
+    <script>
+      const el = (id) => document.getElementById(id);
+      function val(id) { return el(id).value; }
+
+      el("run").addEventListener("click", async () => {
+        el("status").textContent = "Running...";
+        el("out").textContent = "";
+
+        const body = {
+          question: val("q"),
+          mode: val("mode"),
+          llm: val("llm"),
+          domain: val("domain") || null,
+          rounds: Number(val("rounds")),
+          seed_k: Number(val("seed_k")),
+          entities_per_round: Number(val("entities_per_round")),
+          wiki_lang: val("wiki_lang"),
+          passage_k: Number(val("passage_k")),
+        };
+
+        try {
+          const res = await fetch("/api/answer", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body),
+          });
+          const txt = (await res.text()).trim();
+          el("out").textContent = txt;
+          el("status").textContent = res.ok ? "OK" : ("HTTP " + res.status);
+        } catch (e) {
+          el("status").textContent = "Error";
+          el("out").textContent = String(e);
+        }
+      });
+    </script>
+  </body>
+</html>
+

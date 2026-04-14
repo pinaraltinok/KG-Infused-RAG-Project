@@ -1,0 +1,11 @@
+*.txt
+*.jsonl
+*.csv
+neo4j/data/
+__pycache__/
+.env
+
+# local artifacts (recommended)
+*.db
+*.db-wal
+*.db-shm
