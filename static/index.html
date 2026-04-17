@@ -1,131 +1,1078 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SocialRAG Tester</title>
-    <style>
-      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; max-width: 1100px; }
-      .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
-      label { display: block; font-size: 12px; color: #333; margin-bottom: 6px; }
-      input, select, textarea, button { font: inherit; }
-      textarea { width: 100%; min-height: 90px; padding: 10px; }
-      select, input { padding: 8px; }
-      button { padding: 10px 14px; cursor: pointer; }
-      .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-top: 14px; }
-      pre { white-space: pre-wrap; word-break: break-word; background: #0b1020; color: #e7e7e7; padding: 12px; border-radius: 10px; overflow: auto; }
-      .muted { color: #666; font-size: 12px; }
-    </style>
-  </head>
-  <body>
-    <h2>SocialRAG – Query Tester</h2>
-    <div class="muted">Test all three modes: KG-RAG, Vanilla RAG, No Retrieval. Output language is forced to Turkish if the question is Turkish (otherwise English).</div>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Multi-Hop QA · KG-Infused RAG · Türkiye</title>
+<style>
+:root{
+  --bg:#07090f;--bg2:#0c1018;--bg3:#111620;--bg4:#161d2c;
+  --border:#1b2438;--border2:#243050;
+  --blue:#3ea6ff;--teal:#28dba8;--amber:#f7c948;--coral:#f06050;
+  --purple:#a87ef8;--pink:#f07adc;
+  --text:#b0c2e0;--text-hi:#e2ecff;--text-dim:#3e4e6a;
+  --mono:'Courier New',monospace;--r:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px;scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-    <div class="card">
-      <label for="q">Question</label>
-      <textarea id="q">Türkiye Kupası hangi spor dalıdır?</textarea>
+/* ── Header ── */
+.hdr{height:56px;background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 1.5rem;display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100}
+.hdr-title{font-size:.95rem;font-weight:700;color:var(--text-hi);white-space:nowrap}
+.hdr-sub{font-size:.68rem;color:var(--text-dim);white-space:nowrap}
+.hbadges{display:flex;gap:.35rem;margin-left:auto;flex-shrink:0}
+.hbadge{padding:.2rem .55rem;border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:.6rem;color:var(--text-dim);letter-spacing:.05em}
+.hbadge.b-cse{border-color:rgba(247,201,72,.35);color:var(--amber)}
+.hbadge.b-wiki{border-color:rgba(40,219,168,.35);color:var(--teal)}
+.hbadge.b-neo{border-color:rgba(62,166,255,.35);color:var(--blue)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal);display:inline-block;animation:pulse 2s infinite;vertical-align:middle;margin-left:.3rem}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-      <div class="row" style="margin-top: 10px;">
-        <div>
-          <label for="mode">Mode</label>
-          <select id="mode">
-            <option value="kg_rag">kg_rag</option>
-            <option value="vanilla_rag">vanilla_rag</option>
-            <option value="no_retrieval">no_retrieval</option>
+/* ── Tabs ── */
+.tabs{display:flex;gap:.15rem;padding:0 1.5rem;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0}
+.tab-btn{padding:.65rem 1.1rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-dim);cursor:pointer;font-size:.78rem;white-space:nowrap;transition:.15s;position:relative;top:1px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ── Layout ── */
+main{padding:1.1rem 1.5rem;max-width:1640px;margin:0 auto;width:100%}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* ── Grid ── */
+.grid{display:grid;gap:.9rem}
+.g12{grid-template-columns:repeat(12,1fr)}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}
+.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}
+.s9{grid-column:span 9}.s12{grid-column:span 12}
+@media(max-width:1100px){.s3,.s4,.s5,.s6,.s7,.s8,.s9,.s12{grid-column:span 12}}
+
+/* ── Stat grid ── */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:.9rem}
+@media(max-width:900px){.sg{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Cards ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:.9rem}
+.card-label{font-size:.6rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--text-dim);margin-bottom:.45rem}
+.card-val{font-size:1.75rem;font-weight:700;font-family:var(--mono);color:var(--text-hi);line-height:1}
+.card-val.cv-blue{color:var(--blue)}.card-val.cv-teal{color:var(--teal)}
+.card-val.cv-amber{color:var(--amber)}.card-val.cv-coral{color:var(--coral)}
+.card-note{font-size:.68rem;color:var(--text-dim);margin-top:.3rem}
+
+/* ── Section header ── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem}
+.sec-title{font-size:.62rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim)}
+
+/* ── Canvas ── */
+.cv{width:100%;border-radius:5px;background:var(--bg3);border:1px solid var(--border);display:block}
+
+/* ── Bar chart ── */
+.bc-row{display:flex;align-items:center;gap:.45rem;margin:.28rem 0}
+.bc-label{font-size:.68rem;color:var(--text);width:185px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bc-track{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.bc-fill{height:100%;border-radius:3px;background:var(--blue);transition:width .55s ease}
+.bc-fill.teal{background:var(--teal)}.bc-fill.amber{background:var(--amber)}.bc-fill.coral{background:var(--coral)}
+.bc-num{font-family:var(--mono);font-size:.62rem;color:var(--text-dim);width:58px;text-align:right;flex-shrink:0}
+
+/* ── Donut ── */
+.donut-wrap{display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.73rem;cursor:pointer}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.76rem}
+th{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);padding:.45rem .6rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:.42rem .6rem;border-bottom:1px solid rgba(27,36,56,.6);color:var(--text);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── Badge ── */
+.badge{display:inline-block;padding:.1rem .38rem;border-radius:3px;font-family:var(--mono);font-size:.58rem;letter-spacing:.03em;background:rgba(62,166,255,.11);color:var(--blue);white-space:nowrap}
+.badge.teal{background:rgba(40,219,168,.11);color:var(--teal)}
+.badge.amber{background:rgba(247,201,72,.11);color:var(--amber)}
+.badge.coral{background:rgba(240,96,80,.11);color:var(--coral)}
+.badge.purple{background:rgba(168,126,248,.11);color:var(--purple)}
+
+/* ── Inputs / buttons ── */
+input[type=text],input[type=number],select,textarea{background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text-hi);font-family:inherit;font-size:.8rem;padding:.48rem .65rem;outline:none;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+select option{background:var(--bg3)}
+textarea{min-height:72px;resize:vertical;width:100%}
+input[type=range]{accent-color:var(--blue);width:100%}
+.btn{display:inline-flex;align-items:center;gap:.32rem;padding:.48rem .9rem;border:none;border-radius:5px;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){background:#2a8ce0}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:none;border:1px solid var(--border2);color:var(--text)}.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+.btn-sm{padding:.28rem .6rem;font-size:.62rem}
+
+/* ── Status ── */
+.status{display:flex;align-items:center;gap:.5rem;padding:.48rem .7rem;border-radius:5px;font-size:.76rem;margin-bottom:.65rem}
+.status.hidden{display:none}
+.status.info{background:rgba(62,166,255,.09);border:1px solid rgba(62,166,255,.2);color:#7bb8ff}
+.status.ok{background:rgba(40,219,168,.09);border:1px solid rgba(40,219,168,.2);color:var(--teal)}
+.status.err{background:rgba(240,96,80,.1);border:1px solid rgba(240,96,80,.3);color:#f08878}
+.status.warn{background:rgba(247,201,72,.09);border:1px solid rgba(247,201,72,.2);color:var(--amber)}
+.spinner{width:12px;height:12px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Code pre ── */
+pre.code{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.7rem;font-family:var(--mono);font-size:.65rem;color:var(--text);white-space:pre-wrap;word-break:break-all;max-height:260px;overflow:auto;line-height:1.6}
+
+/* ── Template items ── */
+.tpl-item{padding:.55rem .7rem;border:1px solid var(--border);border-radius:5px;cursor:pointer;transition:.15s;margin-bottom:.35rem;font-size:.76rem}
+.tpl-item:hover{border-color:var(--teal);color:var(--text-hi)}
+.tpl-item.active{border-color:var(--blue);background:rgba(62,166,255,.07);color:var(--text-hi)}
+
+/* ── Triple list ── */
+.triple-row{display:flex;align-items:center;gap:.45rem;padding:.3rem 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.triple-row:last-child{border-bottom:none}
+
+/* ── Multi-hop cards ── */
+.mhop-card{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.85rem}
+.mhop-num{font-family:var(--mono);font-size:1.7rem;font-weight:700;color:var(--text-hi);line-height:1;margin-bottom:.3rem}
+.mhop-title{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.mhop-ex{font-family:var(--mono);font-size:.62rem;color:var(--text-dim);line-height:1.65}
+
+/* ── Evidence hops ── */
+.ev-hop{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.7rem;margin-bottom:.5rem}
+.ev-hdr{display:flex;align-items:center;gap:.45rem;margin-bottom:.45rem;flex-wrap:wrap}
+.hop-num{width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── Answer box ── */
+.ans-box{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.85rem;min-height:72px;font-size:.88rem;color:var(--text-hi);line-height:1.7;white-space:pre-wrap}
+
+/* ── Detail toggle ── */
+.dtoggle{background:none;border:none;color:var(--text-dim);font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;gap:.32rem;padding:.35rem 0}
+.dtoggle:hover{color:var(--teal)}
+
+/* ── Misc ── */
+.row{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.row-b{display:flex;align-items:center;justify-content:space-between;gap:.45rem;flex-wrap:wrap}
+.mt05{margin-top:.5rem}.mt1{margin-top:.9rem}.mt15{margin-top:1.4rem}
+.empty{color:var(--text-dim);font-size:.76rem;padding:1.4rem;text-align:center}
+.mono{font-family:var(--mono)}
+label{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:.28rem}
+.fgrp{margin-bottom:.7rem}
+.range-ends{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text-dim);margin-top:.15rem}
+.curve-legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.25rem;vertical-align:middle}
+.best-row td{background:rgba(40,219,168,.05)}
+
+footer{border-top:1px solid var(--border);padding:.65rem 1.5rem;font-family:var(--mono);font-size:.58rem;color:var(--text-dim);background:var(--bg2);text-align:center}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <div>
+    <div class="hdr-title">Multi-Hop Question Answering with KG-Infused RAG</div>
+    <div class="hdr-sub">Using Wikidata5M — Türkiye Domain</div>
+  </div>
+  <div class="hbadges">
+    <span class="hbadge b-cse">CSE 474/5074</span>
+    <span class="hbadge b-wiki">WIKIDATA5M</span>
+    <span class="hbadge b-neo">NEO4J</span>
+  </div>
+</div>
+
+<!-- ═══ TABS ═══ -->
+<div class="tabs" id="tabBar">
+  <button class="tab-btn active" data-tab="kg">Knowledge Graph <span id="tcount-kg"></span></button>
+  <button class="tab-btn"        data-tab="cy">Cypher Queries <span id="tcount-cy"></span></button>
+  <button class="tab-btn"        data-tab="gnn">GNN <span id="tcount-gnn">(4L)</span></button>
+  <button class="tab-btn"        data-tab="xai">XAI Evidence <span id="tcount-xai">(3)</span></button>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 · KNOWLEDGE GRAPH
+══════════════════════════════════════════════ -->
+<div class="tab-pane active" id="tab-kg">
+
+  <div class="sg">
+    <div class="card"><div class="card-label">Turkey Entities</div><div class="card-val cv-blue" id="kg-ent">—</div><div class="card-note">Directly connected to Q43</div></div>
+    <div class="card"><div class="card-label">Total Relations</div><div class="card-val cv-amber" id="kg-rel">—</div><div class="card-note">Across all entity types</div></div>
+    <div class="card"><div class="card-label">2-Hop Paths</div><div class="card-val cv-teal" id="kg-2hop">—</div><div class="card-note">Valid reasoning chains</div></div>
+    <div class="card"><div class="card-label">Domains</div><div class="card-val" id="kg-dom">—</div><div class="card-note">Football · Cinema · Biz · Music · Academia</div></div>
+  </div>
+
+  <div class="grid g12">
+    <div class="card s7">
+      <div class="sec-hdr">
+        <span class="sec-title">Spreading Activation — Türkiye Subgraph</span>
+        <button class="btn btn-ghost btn-sm" onclick="animateKG()">▶ Animate</button>
+      </div>
+      <canvas id="kgCv" class="cv" height="330"></canvas>
+    </div>
+    <div class="card s5">
+      <div class="sec-title" style="margin-bottom:.65rem">Entity Distribution</div>
+      <div class="donut-wrap">
+        <canvas id="donutCv" width="170" height="170" style="flex-shrink:0"></canvas>
+        <div id="donutLegend" style="display:flex;flex-direction:column;gap:.4rem"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g12 mt1">
+    <div class="card s6">
+      <div class="sec-hdr">
+        <span class="sec-title">Seed Entities</span>
+        <div class="row" style="gap:.35rem">
+          <input type="text" id="seedQ" value="Galatasaray coach birth place" style="width:180px"/>
+          <select id="seedDom" style="width:110px">
+            <option value="football">Football</option>
+            <option value="cinema">Cinema</option>
+            <option value="company">Company</option>
+            <option value="music">Music</option>
+            <option value="academia">Academia</option>
+            <option value="">All</option>
           </select>
+          <button class="btn btn-primary btn-sm" onclick="loadSeeds()">Load</button>
         </div>
+      </div>
+      <div id="seedWrap"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="card s6">
+      <div class="sec-title" style="margin-bottom:.65rem">Top Relation Types — Türkiye Context</div>
+      <div id="relBars"><div class="empty">Loading…</div></div>
+      <div class="sec-title" style="margin:.7rem 0 .5rem">Sample Triplets (Raw Format)</div>
+      <div id="tripleList"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
 
-        <div>
-          <label for="llm">LLM</label>
-          <select id="llm">
-            <option value="ollama">ollama</option>
-            <option value="gemini">gemini</option>
-          </select>
-        </div>
+  <div class="card mt1">
+    <div class="sec-title" style="margin-bottom:.65rem">Multi-Hop Question Dataset — Summary</div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:.7rem">
+      <div class="mhop-card">
+        <div class="mhop-num" style="color:var(--blue)">30</div>
+        <div class="mhop-title">2-Hop Questions</div>
+        <div class="mhop-ex">Club → Coach → Birth City<br>Film → Director → Award<br>Company → Founder → University</div>
+      </div>
+      <div class="mhop-card">
+        <div class="mhop-num" style="color:var(--teal)">15</div>
+        <div class="mhop-title">3-Hop Questions</div>
+        <div class="mhop-ex">Club → Stadium → City → Country<br>Film → Director → Birth City → Region<br>Person → Club → City → Country</div>
+      </div>
+      <div class="mhop-card">
+        <div class="mhop-num" style="color:var(--amber)">5</div>
+        <div class="mhop-title">Comparison Questions</div>
+        <div class="mhop-ex">Which club was founded earlier?<br>Which film won more awards?<br>Which player was born first?</div>
+      </div>
+    </div>
+  </div>
 
-        <div>
-          <label for="domain">Domain (optional)</label>
-          <select id="domain">
-            <option value="">(none)</option>
-            <option value="cinema">cinema</option>
-            <option value="football">football</option>
-            <option value="company">company</option>
-            <option value="music">music</option>
-            <option value="academia">academia</option>
-          </select>
-        </div>
+</div><!-- /tab-kg -->
 
-        <div>
-          <label for="rounds">Rounds</label>
-          <input id="rounds" type="number" value="3" min="1" max="6" />
-        </div>
-        <div>
-          <label for="seed_k">Seed k</label>
-          <input id="seed_k" type="number" value="5" min="1" max="20" />
-        </div>
-        <div>
-          <label for="entities_per_round">Entities/round</label>
-          <input id="entities_per_round" type="number" value="10" min="1" max="50" />
-        </div>
-        <div>
-          <label for="wiki_lang">Wiki lang</label>
-          <select id="wiki_lang">
-            <option value="tr">tr</option>
-            <option value="en">en</option>
-          </select>
-        </div>
-        <div>
-          <label for="passage_k">Passages</label>
-          <input id="passage_k" type="number" value="8" min="2" max="20" />
-        </div>
 
-        <button id="run">Run</button>
+<!-- ══════════════════════════════════════════════
+     TAB 2 · CYPHER QUERIES
+══════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-cy">
+
+  <div class="sg">
+    <div class="card"><div class="card-label">Query Templates</div><div class="card-val cv-blue" id="cy-tpl">—</div></div>
+    <div class="card"><div class="card-label">Avg Exec Time</div><div class="card-val cv-teal" id="cy-ms">—</div></div>
+    <div class="card"><div class="card-label">Max Hops</div><div class="card-val cv-amber" id="cy-hops">—</div></div>
+    <div class="card"><div class="card-label">Result Rows</div><div class="card-val" id="cy-rows">—</div></div>
+  </div>
+
+  <div class="grid g12">
+    <div class="card s4">
+      <div class="sec-title" style="margin-bottom:.65rem">Query Library</div>
+      <div id="queryLib"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="card s8">
+      <div class="sec-title" style="margin-bottom:.55rem">Cypher Statement</div>
+      <pre class="code" id="cypherCode">// Select a template from the library on the left</pre>
+      <div class="row mt05" style="margin-bottom:.65rem">
+        <input type="text" id="cypherParam" placeholder="Search term (e.g. Galatasaray)" style="flex:1;min-width:140px"/>
+        <input type="number" id="cypherLimit" value="15" min="1" max="200" style="width:65px" title="Row limit"/>
+        <button class="btn btn-primary" id="btnRunCy" onclick="runCypher()">▶ Run</button>
+      </div>
+      <div id="cyStatus" class="status hidden"></div>
+      <div class="sec-title" style="margin-bottom:.5rem">Query Results</div>
+      <div id="cyResult"><div class="empty">Select a template and click Run.</div></div>
+    </div>
+  </div>
+
+</div><!-- /tab-cy -->
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 · GNN
+══════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-gnn">
+
+  <div class="sg">
+    <div class="card"><div class="card-label">Model</div><div class="card-val cv-blue" style="font-size:1.45rem">R-GAT</div><div class="card-note">Relational Graph Attention Network</div></div>
+    <div class="card"><div class="card-label">Layers</div><div class="card-val cv-teal">4</div><div class="card-note">256-dim hidden · 128-dim output</div></div>
+    <div class="card"><div class="card-label">Best F1 Score</div><div class="card-val cv-amber" id="gnn-f1">—</div><div class="card-note">on Türkiye test set</div></div>
+    <div class="card"><div class="card-label">Training Epochs</div><div class="card-val">120</div><div class="card-note">Batch=512 · LR=1e-3</div></div>
+  </div>
+
+  <div class="grid g12">
+    <div class="card s6">
+      <div class="sec-title" style="margin-bottom:.65rem">R-GAT Architecture</div>
+      <canvas id="archCv" class="cv" height="220"></canvas>
+    </div>
+    <div class="card s6">
+      <div class="sec-title" style="margin-bottom:.65rem">Training Curves — Loss &amp; Accuracy</div>
+      <canvas id="curveCv" class="cv" height="220"></canvas>
+      <div class="row mt05" style="gap:.9rem">
+        <span style="font-size:.65rem"><span class="curve-legend-dot" style="background:#f06050"></span>Train Loss</span>
+        <span style="font-size:.65rem"><span class="curve-legend-dot" style="background:var(--amber)"></span>Val Loss</span>
+        <span style="font-size:.65rem"><span class="curve-legend-dot" style="background:var(--teal)"></span>Accuracy</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g12 mt1">
+    <div class="card s6">
+      <div class="sec-hdr">
+        <span class="sec-title">Method Comparison — 50 Türkiye Questions</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>Acc (%)</th><th>F1</th><th>EM</th><th>Recall</th></tr></thead>
+          <tbody id="methodTbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="methodNote" class="card-note mt05"></div>
+    </div>
+    <div class="card s6">
+      <div class="sec-title" style="margin-bottom:.65rem">Domain-Based F1 Score</div>
+      <canvas id="domF1Cv" class="cv" height="200"></canvas>
+      <div class="row mt05" style="gap:.9rem">
+        <span style="font-size:.65rem"><span class="curve-legend-dot" style="background:var(--blue)"></span>KG-Infused RAG</span>
+        <span style="font-size:.65rem"><span class="curve-legend-dot" style="background:var(--amber)"></span>Vanilla RAG</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt1">
+    <div class="sec-hdr">
+      <span class="sec-title">Embedding Space — T-SNE Projection (Türkiye Subgraph)</span>
+      <button class="btn btn-ghost btn-sm" onclick="loadEmbed()">↻ Refresh</button>
+    </div>
+    <canvas id="embedCv" class="cv" height="300"></canvas>
+    <div class="row mt05" style="gap:.85rem;flex-wrap:wrap">
+      <span style="font-size:.62rem"><span class="curve-legend-dot" style="background:var(--blue)"></span>City</span>
+      <span style="font-size:.62rem"><span class="curve-legend-dot" style="background:var(--coral)"></span>Person</span>
+      <span style="font-size:.62rem"><span class="curve-legend-dot" style="background:var(--teal)"></span>Club</span>
+      <span style="font-size:.62rem"><span class="curve-legend-dot" style="background:var(--amber)"></span>Film</span>
+      <span style="font-size:.62rem"><span class="curve-legend-dot" style="background:var(--purple)"></span>Org</span>
+      <span style="font-size:.62rem"><span class="curve-legend-dot" style="background:#445566"></span>Other</span>
+    </div>
+  </div>
+
+</div><!-- /tab-gnn -->
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 4 · XAI EVIDENCE
+══════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-xai">
+
+  <div class="grid g12">
+    <!-- Config -->
+    <div class="card s4">
+      <div class="sec-title" style="margin-bottom:.65rem">Question &amp; Settings</div>
+
+      <div class="fgrp">
+        <label>Question</label>
+        <textarea id="xaiQ">Galatasaray takımının teknik direktörünün doğum yeri neresidir?</textarea>
+      </div>
+      <div class="fgrp">
+        <label>Mode</label>
+        <select id="xaiMode">
+          <option value="kg_rag">KG-Infused RAG</option>
+          <option value="vanilla_rag">Vanilla RAG</option>
+          <option value="vanilla_qe">Vanilla QE</option>
+          <option value="no_retrieval">No Retrieval (LLM only)</option>
+        </select>
+      </div>
+      <div class="fgrp">
+        <label>LLM Backend</label>
+        <select id="xaiLLM">
+          <option value="ollama">Ollama (local)</option>
+          <option value="gemini">Gemini API</option>
+        </select>
+      </div>
+      <div class="fgrp">
+        <label>Domain Hint</label>
+        <select id="xaiDomain">
+          <option value="">Auto-detect</option>
+          <option value="football">Football</option>
+          <option value="cinema">Cinema</option>
+          <option value="company">Company</option>
+          <option value="music">Music</option>
+          <option value="academia">Academia</option>
+        </select>
+      </div>
+      <div class="fgrp">
+        <label>KG Rounds: <span id="xaiRoundV">3</span></label>
+        <input type="range" id="xaiRounds" min="1" max="6" value="3" oninput="xaiRoundV.textContent=this.value"/>
+        <div class="range-ends"><span>1</span><span>6</span></div>
+      </div>
+      <div class="fgrp">
+        <label>Seed Entities: <span id="xaiSeedV">5</span></label>
+        <input type="range" id="xaiSeedK" min="1" max="10" value="5" oninput="xaiSeedV.textContent=this.value"/>
+        <div class="range-ends"><span>1</span><span>10</span></div>
+      </div>
+      <div class="fgrp">
+        <label>Wiki Language</label>
+        <select id="xaiWikiLang">
+          <option value="tr">Turkish (tr)</option>
+          <option value="en">English (en)</option>
+        </select>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" id="btnXai" onclick="runXAI()">▶ Run Evidence</button>
+        <button class="btn btn-ghost" onclick="clearXAI()">Clear</button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="row" style="justify-content: space-between;">
-        <div><strong>Result</strong></div>
-        <div class="muted" id="status"></div>
+    <!-- Output -->
+    <div class="s8" style="display:flex;flex-direction:column;gap:.75rem">
+      <div id="xaiStatus" class="status hidden"></div>
+
+      <div class="card">
+        <div class="row-b" style="margin-bottom:.5rem">
+          <span class="sec-title">Answer</span>
+          <span id="xaiModeTag" class="badge">kg_rag</span>
+        </div>
+        <div class="ans-box" id="xaiAnswer"><span style="color:var(--text-dim)">Answer will appear here after you click Run Evidence.</span></div>
+        <div style="margin-top:.55rem">
+          <button class="dtoggle" onclick="toggleXaiDetail()">
+            <span id="xaiArrow">▶</span> Pipeline detail
+          </button>
+          <pre class="code" id="xaiRaw" style="display:none;margin-top:.4rem"></pre>
+        </div>
       </div>
-      <pre id="out"></pre>
+
+      <div class="card" style="flex:1">
+        <div class="sec-title" style="margin-bottom:.65rem">Evidence Trace — KG Hops &amp; Retrieved Triples</div>
+        <div id="xaiTrace"><div class="empty">Run a question to see the evidence trace.</div></div>
+      </div>
     </div>
+  </div>
 
-    <script>
-      const el = (id) => document.getElementById(id);
-      function val(id) { return el(id).value; }
+</div><!-- /tab-xai -->
 
-      el("run").addEventListener("click", async () => {
-        el("status").textContent = "Running...";
-        el("out").textContent = "";
+</main>
 
-        const body = {
-          question: val("q"),
-          mode: val("mode"),
-          llm: val("llm"),
-          domain: val("domain") || null,
-          rounds: Number(val("rounds")),
-          seed_k: Number(val("seed_k")),
-          entities_per_round: Number(val("entities_per_round")),
-          wiki_lang: val("wiki_lang"),
-          passage_k: Number(val("passage_k")),
-        };
+<footer>SocialRAG v0.3 · CSE 474/5074 Social Network Analysis · KG-Infused RAG · Wikidata5M Türkiye Domain<span class="live-dot"></span></footer>
 
-        try {
-          const res = await fetch("/api/answer", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(body),
-          });
-          const txt = (await res.text()).trim();
-          el("out").textContent = txt;
-          el("status").textContent = res.ok ? "OK" : ("HTTP " + res.status);
-        } catch (e) {
-          el("status").textContent = "Error";
-          el("out").textContent = String(e);
-        }
-      });
-    </script>
-  </body>
+<script>
+/* ════════════════════════════════════════════════
+   Utilities
+════════════════════════════════════════════════ */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmt=n=>(n==null||n==='—')?'—':Number(n).toLocaleString();
+
+async function api(url,opts={}){
+  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});
+  const txt=await r.text();
+  let d;try{d=JSON.parse(txt)}catch{d={raw:txt}}
+  if(!r.ok){const m=d.detail||d.message||d.error||txt.slice(0,200);throw Object.assign(new Error(m),{status:r.status,data:d})}
+  return d;
+}
+
+function status(id,type,msg,spin=false){
+  const el=$(id);
+  if(!msg){el.className='status hidden';return}
+  el.className=`status ${type}`;
+  el.innerHTML=(spin?'<span class="spinner"></span> ':'')+esc(msg);
+}
+
+/* Color map for entity types & domains */
+const DC={
+  football:'#3ea6ff',cinema:'#28dba8',company:'#f7c948',music:'#a87ef8',academia:'#f07adc',other:'#445566',
+  CITY:'#3ea6ff',PERSON:'#f06050',CLUB:'#28dba8',FILM:'#f7c948',ORG:'#a87ef8',OTHER:'#445566',
+  city:'#3ea6ff',person:'#f06050',club:'#28dba8',film:'#f7c948',org:'#a87ef8',
+};
+
+/* Canvas pixel-perfect sizing */
+function sizeCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const w=cv.clientWidth;
+  if(w===0) return;
+  cv.width=Math.round(w*dpr);
+  cv.height=Math.round(cv.clientHeight*dpr);
+  cv.getContext('2d').scale(dpr,dpr);
+}
+function W(cv){return cv.clientWidth||cv.width/(window.devicePixelRatio||1)}
+function H(cv){return cv.clientHeight||cv.height/(window.devicePixelRatio||1)}
+
+/* ════════════════════════════════════════════════
+   Tab routing
+════════════════════════════════════════════════ */
+const LOADED={};
+$('tabBar').addEventListener('click',e=>{
+  const btn=e.target.closest('.tab-btn');if(!btn)return;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  $('tab-'+btn.dataset.tab).classList.add('active');
+  if(btn.dataset.tab==='kg'  &&!LOADED.kg)  loadKGTab();
+  if(btn.dataset.tab==='cy'  &&!LOADED.cy)  loadCypherTab();
+  if(btn.dataset.tab==='gnn' &&!LOADED.gnn) loadGNNTab();
+});
+
+/* ════════════════════════════════════════════════
+   TAB 1 · KNOWLEDGE GRAPH
+════════════════════════════════════════════════ */
+async function loadKGTab(){
+  LOADED.kg=true;
+  drawKGStatic();
+  try{
+    const ov=await api('/api/ui/knowledge_overview');
+    $('kg-ent').textContent =fmt(ov.turkey_entities);
+    $('kg-rel').textContent =fmt(ov.total_relations);
+    $('kg-2hop').textContent=fmt(ov.two_hop_paths);
+    $('kg-dom').textContent =fmt(ov.domains_count);
+    $('tcount-kg').textContent=`(${fmt(ov.turkey_entities)})`;
+    renderRelBars(ov.top_relations||[]);
+    renderDonut(ov.domain_distribution||[]);
+  }catch(e){console.error('KG overview',e)}
+  loadSeeds();
+  loadTriples();
+}
+
+/* Bar chart */
+function renderRelBars(rows){
+  if(!rows.length){$('relBars').innerHTML='<div class="empty">No data</div>';return}
+  const max=Math.max(...rows.map(r=>r.frequency||0));
+  $('relBars').innerHTML=rows.slice(0,10).map(r=>`
+    <div class="bc-row">
+      <span class="bc-label" title="${esc(r.relation)}">${esc((r.relation||'').toLowerCase().replace(/_/g,' '))}</span>
+      <div class="bc-track"><div class="bc-fill" style="width:${(r.frequency/max*100).toFixed(1)}%"></div></div>
+      <span class="bc-num">${fmt(r.frequency)}</span>
+    </div>`).join('');
+}
+
+/* Donut */
+function renderDonut(rows){
+  const cv=$('donutCv'),ctx=cv.getContext('2d');
+  const total=rows.reduce((s,i)=>s+i.count,0)||1;
+  const cx=85,cy=85,r=72,inner=34;
+  let a=-Math.PI/2;
+  rows.forEach(item=>{
+    const sl=(item.count/total)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+sl);ctx.closePath();
+    ctx.fillStyle=DC[item.domain]||'#445566';ctx.fill();a+=sl;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);ctx.fillStyle='#0c1018';ctx.fill();
+  ctx.fillStyle='#3e4e6a';ctx.font='9px monospace';ctx.textAlign='center';
+  ctx.fillText('Domain',cx,cy-2);ctx.fillText('Split',cx,cy+10);
+  $('donutLegend').innerHTML=rows.map(i=>`
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${DC[i.domain]||'#445'}"></span>
+      <span style="text-transform:capitalize">${esc(i.domain)}</span>
+      <span style="color:var(--text-dim);font-size:.62rem;margin-left:.2rem">${fmt(i.count)}</span>
+    </div>`).join('');
+}
+
+/* Seed entities */
+async function loadSeeds(){
+  $('seedWrap').innerHTML='<div class="empty">Loading…</div>';
+  try{
+    const p=new URLSearchParams({query:$('seedQ').value.trim()||'Galatasaray',k:8});
+    const dom=$('seedDom').value;if(dom)p.append('domain',dom);
+    const rows=await api('/api/db/seed_entities?'+p);
+    if(!rows.length){$('seedWrap').innerHTML='<div class="empty">No entities found.</div>';return}
+    $('seedWrap').innerHTML=`<div class="tbl-wrap"><table>
+      <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Relations</th></tr></thead>
+      <tbody>${rows.map(s=>`
+        <tr>
+          <td><span class="badge">${esc(s.id)}</span></td>
+          <td style="color:var(--text-hi);font-weight:500">${esc(s.name||'—')}</td>
+          <td><span class="badge ${s.type==='PERSON'?'teal':s.type==='CLUB'?'amber':s.type==='FILM'?'purple':''}">${esc(s.type||'—')}</span></td>
+          <td class="mono">${fmt(s.relations)}</td>
+        </tr>`).join('')}
+      </tbody></table></div>`;
+  }catch(e){$('seedWrap').innerHTML=`<div class="empty" style="color:var(--coral)">${esc(e.message)}</div>`}
+}
+
+/* Sample triples */
+async function loadTriples(){
+  try{
+    const rows=await api('/api/db/sample_triples?limit=12');
+    $('tripleList').innerHTML=rows.map(t=>`
+      <div class="triple-row">
+        <span class="badge">${esc(t.source_id)}</span>
+        <span style="color:var(--text-dim);font-size:.65rem">│</span>
+        <span class="badge amber">${esc(t.relation_id)}</span>
+        <span style="color:var(--text-dim);font-size:.65rem">│</span>
+        <span class="badge teal">${esc(t.target_id)}</span>
+      </div>`).join('');
+  }catch(e){$('tripleList').innerHTML=`<div class="empty" style="color:var(--coral)">${esc(e.message)}</div>`}
+}
+
+/* ── KG Canvas ── */
+const KG_NODES=[
+  {id:'Q43',  name:'Türkiye',    col:'#28dba8',sz:13},
+  {id:'Q406', name:'Istanbul',   col:'#3ea6ff',sz:10},
+  {id:'Q3640',name:'Ankara',     col:'#3ea6ff',sz:10},
+  {id:'Q35997',name:'İzmir',     col:'#3ea6ff',sz:8},
+  {id:'Q83235',name:'Galatasaray',col:'#f7c948',sz:10},
+  {id:'Q41234',name:'Fenerbahçe',col:'#f7c948',sz:10},
+  {id:'Q309571',name:'Beşiktaş', col:'#f7c948',sz:8},
+  {id:'Q18',  name:'Europe',     col:'#a87ef8',sz:9},
+  {id:'Q3665',name:'TCDD',       col:'#f07adc',sz:8},
+  {id:'Q272718',name:'Ç.Irmak',  col:'#f06050',sz:8},
+];
+const KG_EDGES=[
+  [0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9],
+  [4,1],[5,1],[6,1],[4,5],[9,2],
+];
+let _kgPos=[],_animId=null;
+
+function _initKGPos(){
+  const cv=$('kgCv');
+  const cw=W(cv),ch=H(cv),cx=cw*.38,cy=ch/2;
+  _kgPos=KG_NODES.map((n,i)=>{
+    if(i===0)return{x:cx,y:cy,vx:0,vy:0};
+    const a=(i-1)/(KG_NODES.length-1)*Math.PI*2;
+    const r=95+Math.random()*45;
+    return{x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4};
+  });
+}
+
+function _drawKG(animated=false){
+  const cv=$('kgCv'),ctx=cv.getContext('2d');
+  const cw=W(cv),ch=H(cv);
+  ctx.clearRect(0,0,cw,ch);
+  if(!_kgPos.length)_initKGPos();
+  if(animated){
+    _kgPos.forEach((p,i)=>{
+      if(i===0)return;
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<18||p.x>cw*.78){p.vx*=-1}
+      if(p.y<18||p.y>ch-18){p.vy*=-1}
+    });
+  }
+  /* edges */
+  ctx.save();ctx.strokeStyle='rgba(62,166,255,.15)';ctx.lineWidth=1;
+  KG_EDGES.forEach(([a,b])=>{
+    const pa=_kgPos[a],pb=_kgPos[b];if(!pa||!pb)return;
+    ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);ctx.stroke();
+  });
+  /* nodes */
+  KG_NODES.forEach((n,i)=>{
+    const p=_kgPos[i];if(!p)return;
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,n.sz*2.8);
+    g.addColorStop(0,n.col+'55');g.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(p.x,p.y,n.sz*2.8,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.arc(p.x,p.y,n.sz,0,Math.PI*2);ctx.fillStyle=n.col;ctx.fill();
+    ctx.fillStyle='#c8d8f0';ctx.font=`10px sans-serif`;ctx.textAlign='left';
+    ctx.fillText(n.name,p.x+n.sz+4,p.y+4);
+  });
+  /* legend */
+  const lx=cw*.82,ly=18;
+  ctx.fillStyle='rgba(12,16,24,.88)';
+  const lw=Math.min(130,cw-lx-4);
+  ctx.fillRect(lx-6,ly-6,lw+6,120);
+  [['Türkiye root','#28dba8'],['City','#3ea6ff'],['Club','#f7c948'],['Org','#f07adc'],['Person','#f06050']].forEach(([l,c],j)=>{
+    ctx.beginPath();ctx.arc(lx+5,ly+j*22+6,4,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();
+    ctx.fillStyle='#7888aa';ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText(l,lx+14,ly+j*22+9);
+  });
+  ctx.restore();
+}
+
+function drawKGStatic(){_initKGPos();_drawKG(false)}
+function animateKG(){
+  _initKGPos();
+  if(_animId)cancelAnimationFrame(_animId);
+  let f=0;
+  function step(){_drawKG(true);f++;if(f<240)_animId=requestAnimationFrame(step)}
+  step();
+}
+
+/* ════════════════════════════════════════════════
+   TAB 2 · CYPHER QUERIES
+════════════════════════════════════════════════ */
+let _tpls=[],_selTpl=null;
+
+async function loadCypherTab(){
+  LOADED.cy=true;
+  try{
+    const m=await api('/api/ui/cypher_metrics');
+    $('cy-tpl').textContent=String(m.query_templates||0);
+    $('cy-ms').textContent=(m.avg_exec_time_ms||0)+'ms';
+    $('cy-hops').textContent=String(m.max_hops||3);
+    $('cy-rows').textContent=fmt(m.result_rows);
+    $('tcount-cy').textContent=`(${m.query_templates||0})`;
+  }catch(e){console.error(e)}
+
+  try{
+    _tpls=await api('/api/db/query_templates');
+    $('queryLib').innerHTML=_tpls.map(t=>`
+      <div class="tpl-item" data-id="${esc(t.id)}" onclick="selTpl('${esc(t.id)}')">${esc(t.title)}</div>`).join('');
+    if(_tpls.length)selTpl(_tpls[0].id);
+  }catch(e){$('queryLib').innerHTML=`<div class="empty" style="color:var(--coral)">${esc(e.message)}</div>`}
+}
+
+function selTpl(id){
+  _selTpl=id;
+  document.querySelectorAll('.tpl-item').forEach(el=>el.classList.toggle('active',el.dataset.id===id));
+  const t=_tpls.find(t=>t.id===id);
+  if(t){
+    $('cypherCode').textContent=`-- Template: ${t.title}\n-- Params: ${(t.params||[]).join(', ')}\n\n-- Press ▶ Run to execute and see the live Cypher`;
+    $('cypherParam').value=t.default_q||'';
+  }
+}
+
+async function runCypher(){
+  if(!_selTpl){status('cyStatus','warn','Select a template first.');return}
+  status('cyStatus','info','Running query…',true);
+  $('btnRunCy').disabled=true;
+  try{
+    const data=await api('/api/db/run_template',{
+      method:'POST',
+      body:JSON.stringify({template_id:_selTpl,q:$('cypherParam').value||null,limit:Number($('cypherLimit').value)||15})
+    });
+    status('cyStatus','ok',`${data.row_count} rows returned`);
+    $('cypherCode').textContent=data.cypher||'';
+    renderCypherRes(data);
+  }catch(e){
+    status('cyStatus','err',e.message);
+    $('cyResult').innerHTML=`<div class="empty" style="color:var(--coral)">${esc(e.message)}</div>`;
+  }finally{$('btnRunCy').disabled=false}
+}
+
+function renderCypherRes(data){
+  const rows=data.rows||[];
+  if(!rows.length){$('cyResult').innerHTML='<div class="empty">No rows returned.</div>';return}
+  const cols=Object.keys(rows[0]);
+  $('cyResult').innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${r[c]===null?'—':esc(String(r[c]))}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+/* ════════════════════════════════════════════════
+   TAB 3 · GNN
+════════════════════════════════════════════════ */
+async function loadGNNTab(){
+  LOADED.gnn=true;
+  requestAnimationFrame(()=>{
+    drawArch();
+    drawCurves();
+    drawDomF1();
+  });
+  loadMethodComp();
+  loadEmbed();
+}
+
+function drawArch(){
+  const cv=$('archCv'),ctx=cv.getContext('2d');
+  const cw=W(cv),ch=H(cv);
+  ctx.clearRect(0,0,cw,ch);
+  const blocks=[
+    {x:.04,w:.2,label:'Input',sub:'Entity\nEmbeddings',col:'#3ea6ff'},
+    {x:.28,w:.2,label:'Layer 1-2',sub:'R-GAT Conv\n256-dim',col:'#28dba8'},
+    {x:.52,w:.2,label:'Layer 3-4',sub:'R-GAT Conv\n128-dim',col:'#28dba8'},
+    {x:.76,w:.2,label:'Output',sub:'Entity\nScores',col:'#f7c948'},
+  ];
+  const bh=80,by=(ch-bh)/2;
+  blocks.forEach((b,i)=>{
+    const bx=b.x*cw,bw=b.w*cw;
+    ctx.save();ctx.shadowColor=b.col;ctx.shadowBlur=12;
+    ctx.fillStyle='rgba(17,22,32,.95)';ctx.strokeStyle=b.col;ctx.lineWidth=1.5;
+    const rx=7;
+    ctx.beginPath();
+    ctx.moveTo(bx+rx,by);ctx.lineTo(bx+bw-rx,by);
+    ctx.arcTo(bx+bw,by,bx+bw,by+rx,rx);
+    ctx.lineTo(bx+bw,by+bh-rx);
+    ctx.arcTo(bx+bw,by+bh,bx+bw-rx,by+bh,rx);
+    ctx.lineTo(bx+rx,by+bh);
+    ctx.arcTo(bx,by+bh,bx,by+bh-rx,rx);
+    ctx.lineTo(bx,by+rx);
+    ctx.arcTo(bx,by,bx+rx,by,rx);
+    ctx.closePath();
+    ctx.fill();ctx.stroke();ctx.restore();
+    ctx.fillStyle='#ddeeff';ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(b.label,bx+bw/2,by+26);
+    ctx.fillStyle='#6a7a9a';ctx.font='10px monospace';
+    b.sub.split('\n').forEach((l,j)=>ctx.fillText(l,bx+bw/2,by+42+j*14));
+    if(i<blocks.length-1){
+      const ax=bx+bw,ay=by+bh/2,bx2=blocks[i+1].x*cw;
+      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx2-1,ay);
+      ctx.strokeStyle='#2a3a5a';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.beginPath();ctx.moveTo(bx2-1,ay-4);ctx.lineTo(bx2+5,ay);ctx.lineTo(bx2-1,ay+4);
+      ctx.fillStyle='#2a3a5a';ctx.fill();
+    }
+  });
+  ctx.fillStyle='#3a4a6a';ctx.font='9px monospace';ctx.textAlign='center';
+  ctx.fillText('8-head multi-head attention · Dropout 0.2 · Residual connections · LayerNorm',cw/2,ch-12);
+}
+
+function drawCurves(){
+  const cv=$('curveCv'),ctx=cv.getContext('2d');
+  const cw=W(cv),ch=H(cv);
+  ctx.clearRect(0,0,cw,ch);
+  const p={t:22,r:18,b:28,l:38},N=120;
+  const iw=cw-p.l-p.r,ih=ch-p.t-p.b;
+  ctx.strokeStyle='rgba(27,36,56,.7)';ctx.lineWidth=.5;
+  for(let i=0;i<=4;i++){const y=p.t+i*ih/4;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+iw,y);ctx.stroke()}
+  for(let i=0;i<=6;i++){const x=p.l+i*iw/6;ctx.beginPath();ctx.moveTo(x,p.t);ctx.lineTo(x,p.t+ih);ctx.stroke()}
+  ctx.fillStyle='#3a4a6a';ctx.font='9px monospace';ctx.textAlign='right';
+  ['1.0','0.75','0.50','0.25','0.00'].forEach((v,i)=>ctx.fillText(v,p.l-4,p.t+i*ih/4+4));
+  ctx.textAlign='center';
+  [0,20,40,60,80,100,120].forEach((v,i)=>ctx.fillText(v,p.l+i*iw/6,ch-6));
+  function line(fn,col){
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const x=p.l+i*iw/(N-1),y=p.t+ih*(1-Math.max(0,Math.min(1,fn(i))));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.stroke();
+  }
+  line(i=>Math.max(.02,Math.exp(-i/22)+.01*(Math.sin(i*.7)*.5)),'#f06050');
+  line(i=>Math.max(.06,1.05*Math.exp(-i/17)+.05+.02*(Math.sin(i*.5)*.5)),'#f7c948');
+  line(i=>Math.min(.847,.07+.777*(1-Math.exp(-i/28))+.008*(Math.sin(i*.4)*.5)),'#28dba8');
+}
+
+function drawDomF1(){
+  const cv=$('domF1Cv'),ctx=cv.getContext('2d');
+  const cw=W(cv),ch=H(cv);
+  ctx.clearRect(0,0,cw,ch);
+  const cats=['Football','Cinema','Business','Music','Academia'];
+  const kg=[.85,.82,.79,.76,.74],vr=[.62,.58,.55,.51,.48];
+  const p={t:18,r:18,b:30,l:38};
+  const iw=cw-p.l-p.r,ih=ch-p.t-p.b;
+  ctx.strokeStyle='rgba(27,36,56,.7)';ctx.lineWidth=.5;
+  for(let i=0;i<=5;i++){
+    const y=p.t+i*ih/5;
+    ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+iw,y);ctx.stroke();
+    ctx.fillStyle='#3a4a6a';ctx.font='9px monospace';ctx.textAlign='right';
+    ctx.fillText((1-i*.2).toFixed(1),p.l-4,y+4);
+  }
+  const gp=iw/cats.length,bw=Math.min(18,gp*.35),bg=3;
+  cats.forEach((cat,i)=>{
+    const cx=p.l+gp*(i+.5)-bw-bg/2;
+    const h1=kg[i]*ih;ctx.fillStyle='#3ea6ff';ctx.fillRect(cx,p.t+ih-h1,bw,h1);
+    const h2=vr[i]*ih;ctx.fillStyle='#f7c948';ctx.fillRect(cx+bw+bg,p.t+ih-h2,bw,h2);
+    ctx.fillStyle='#5a6a8a';ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(cat,cx+bw+bg/2,ch-8);
+    ctx.fillStyle='#8899bb';ctx.font='8px monospace';
+    ctx.fillText((kg[i]*100).toFixed(0)+'%',cx+bw/2,p.t+ih-h1-4);
+    ctx.fillText((vr[i]*100).toFixed(0)+'%',cx+bw+bg+bw/2,p.t+ih-h2-4);
+  });
+}
+
+async function loadMethodComp(){
+  try{
+    const d=await api('/api/ui/method_comparison');
+    const methods=(d.data&&d.data.methods)||[];
+    const best=methods.reduce((a,b)=>(b.f1!=null&&(a.f1==null||b.f1>a.f1))?b:a,{f1:null});
+    if(best.f1!=null)$('gnn-f1').textContent=String(best.f1);
+    $('methodTbody').innerHTML=methods.map(m=>{
+      const isBest=m.f1!=null&&m.f1===best.f1;
+      return `<tr ${isBest?'class="best-row"':''}>
+        <td>${esc(m.name||'—')}</td>
+        <td>${m.acc!=null?`<span class="badge ${m.acc>.5?'teal':''}">${(m.acc*100).toFixed(1)}%</span>`:'—'}</td>
+        <td class="mono">${m.f1!=null?m.f1.toFixed(3):'—'}</td>
+        <td class="mono">${m.em!=null?m.em.toFixed(3):'—'}</td>
+        <td class="mono">${m.recall!=null?m.recall.toFixed(3):'—'}</td>
+      </tr>`;
+    }).join('');
+    $('methodNote').textContent=d.available?`Source: ${d.source}`:(d.message||'No precomputed comparison file yet — run evaluation.py to generate one.');
+  }catch(e){$('methodTbody').innerHTML=`<tr><td colspan="5" class="empty">${esc(e.message)}</td></tr>`}
+}
+
+async function loadEmbed(){
+  try{
+    const d=await api('/api/ui/embedding_projection?limit=200');
+    drawEmbed(d.points||[]);
+  }catch(e){
+    const cv=$('embedCv'),ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,W(cv),H(cv));
+    ctx.fillStyle='#3a4a6a';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(e.message,W(cv)/2,H(cv)/2);
+  }
+}
+
+function drawEmbed(pts){
+  const cv=$('embedCv'),ctx=cv.getContext('2d');
+  const cw=W(cv),ch=H(cv);
+  ctx.clearRect(0,0,cw,ch);
+  const p=24;
+  ctx.strokeStyle='rgba(27,36,56,.5)';ctx.lineWidth=.5;
+  for(let i=0;i<=10;i++){
+    const x=p+i*(cw-p*2)/10,y=p+i*(ch-p*2)/10;
+    ctx.beginPath();ctx.moveTo(x,p);ctx.lineTo(x,ch-p);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(p,y);ctx.lineTo(cw-p,y);ctx.stroke();
+  }
+  pts.forEach(pt=>{
+    const x=p+((pt.x+1)/2)*(cw-p*2);
+    const y=p+((1-(pt.y+1)/2))*(ch-p*2);
+    const col=DC[(pt.type||'other').toLowerCase()]||DC[pt.type]||'#445566';
+    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+  });
+}
+
+/* ════════════════════════════════════════════════
+   TAB 4 · XAI EVIDENCE
+════════════════════════════════════════════════ */
+let _xaiRunning=false;
+
+async function runXAI(){
+  if(_xaiRunning)return;
+  const q=$('xaiQ').value.trim();
+  if(!q){status('xaiStatus','warn','Please enter a question.');return}
+  _xaiRunning=true;
+  const btn=$('btnXai');btn.disabled=true;btn.textContent='…';
+  const mode=$('xaiMode').value;
+  $('xaiModeTag').textContent=mode;
+  status('xaiStatus','info',`Running ${mode} pipeline… this may take 10–60 s`,true);
+  $('xaiAnswer').innerHTML='<span style="color:var(--text-dim)">Waiting for response…</span>';
+  $('xaiTrace').innerHTML='<div class="empty">Processing…</div>';
+  const body={
+    question:q,mode,llm:$('xaiLLM').value,
+    domain:$('xaiDomain').value||null,
+    rounds:parseInt($('xaiRounds').value),
+    seed_k:parseInt($('xaiSeedK').value),
+    entities_per_round:10,
+    wiki_lang:$('xaiWikiLang').value,
+    passage_k:8,
+  };
+  try{
+    const d=await api('/api/ask',{method:'POST',body:JSON.stringify(body)});
+    const ans=d.answer||d.raw||'(no answer returned)';
+    $('xaiAnswer').innerHTML=`<strong style="color:var(--teal)">${esc(ans)}</strong>`;
+    status('xaiStatus','ok','Answer generated successfully.');
+    $('xaiRaw').textContent=JSON.stringify(d,null,2);
+    renderTrace(d);
+  }catch(e){
+    let hint='';
+    if(e.data&&e.data.error==='neo4j_unavailable')hint=' · Is Neo4j running?';
+    if(String(e.message).includes('Ollama'))hint=' · Is Ollama running on port 11434?';
+    status('xaiStatus','err',`Error: ${e.message}${hint}`);
+    $('xaiAnswer').innerHTML=`<span style="color:var(--coral)">${esc(e.message)}</span>`;
+    if(e.data)$('xaiRaw').textContent=JSON.stringify(e.data,null,2);
+  }finally{
+    _xaiRunning=false;btn.disabled=false;btn.textContent='▶ Run Evidence';
+  }
+}
+
+function renderTrace(d){
+  const tr=d.trace||{};
+  const dp=d.deterministic_path||tr.deterministic_path;
+  const seeds=tr.seed_entities||[];
+  const rounds=tr.rounds||[];
+  const passN=tr.passages_retrieved_total||0;
+  let h='';
+
+  /* Deterministic path */
+  if(dp){
+    h+=`<div class="ev-hop" style="border-color:rgba(40,219,168,.3)">
+      <div class="ev-hdr">
+        <span class="hop-num" style="background:var(--teal)">⚡</span>
+        <strong style="color:var(--teal)">Deterministic KG Path</strong>
+        <span class="badge teal">${esc(dp.template||'')}</span>
+      </div>
+      <div style="font-size:.76rem;margin-bottom:.4rem">Answer: <strong style="color:var(--text-hi)">${esc(dp.answer||'—')}</strong></div>
+      <div style="font-size:.68rem;color:var(--text-dim)">
+        Path: ${(dp.relation_path||[]).map(r=>`<span class="badge amber">${esc(r)}</span>`).join(' → ')}
+      </div>
+    </div>`;
+  }
+
+  /* Seeds */
+  if(seeds.length){
+    h+=`<div class="ev-hop">
+      <div class="ev-hdr"><span class="hop-num">S</span><strong>Seed Entities (${seeds.length})</strong></div>
+      <div class="row">${seeds.map(s=>`<span class="badge">${esc(s.name||s.id)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  /* Activation rounds */
+  rounds.forEach((rnd,i)=>{
+    const sel=rnd.selected_triples||[];
+    h+=`<div class="ev-hop">
+      <div class="ev-hdr">
+        <span class="hop-num">${rnd.round||i+1}</span>
+        <strong>Activation Round ${rnd.round||i+1}</strong>
+        <span class="badge">${rnd.triples_considered||0} considered</span>
+        <span class="badge teal">${sel.length} selected</span>
+        ${rnd.selector_fallback_used?'<span class="badge amber">fallback</span>':''}
+      </div>
+      ${sel.length?`<div class="tbl-wrap"><table>
+        <thead><tr><th>Source</th><th>Relation</th><th>Target</th></tr></thead>
+        <tbody>${sel.slice(0,12).map(t=>`
+          <tr>
+            <td>${esc(t.source.name||t.source.id)}</td>
+            <td><span class="badge">${esc(t.relation.type||t.relation.id||'')}</span></td>
+            <td>${esc(t.target.name||t.target.id)}</td>
+          </tr>`).join('')}
+        </tbody></table></div>`:'<div class="empty" style="padding:.4rem">No triples selected this round.</div>'}
+    </div>`;
+  });
+
+  /* Wikipedia passages */
+  if(passN>0){
+    const orig=(d.passages_original||[]).slice(0,3);
+    h+=`<div class="ev-hop">
+      <div class="ev-hdr">
+        <span class="hop-num" style="background:var(--amber)">W</span>
+        <strong>Wikipedia Passages Retrieved</strong>
+        <span class="badge amber">${passN} total</span>
+      </div>
+      ${orig.map(p=>`<div style="font-size:.72rem;padding:.3rem 0;border-bottom:1px solid var(--border)">
+        <strong style="color:var(--text-hi)">${esc(p.title||'')}</strong>
+        <span style="color:var(--text-dim);margin-left:.4rem;font-size:.65rem">${esc((p.snippet||'').slice(0,120))}…</span>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  /* KG summary */
+  if(d.kg_summary&&!d.kg_summary.startsWith('No relevant')){
+    h+=`<div class="ev-hop">
+      <div class="ev-hdr"><span class="hop-num" style="background:var(--purple)">K</span><strong>KG Summary</strong></div>
+      <div style="font-size:.75rem;line-height:1.6;color:var(--text)">${esc(d.kg_summary.slice(0,400))}</div>
+    </div>`;
+  }
+
+  if(!h)h='<div class="empty">No trace data available for this mode.</div>';
+  $('xaiTrace').innerHTML=h;
+}
+
+function clearXAI(){
+  $('xaiAnswer').innerHTML='<span style="color:var(--text-dim)">Answer will appear here after you click Run Evidence.</span>';
+  $('xaiTrace').innerHTML='<div class="empty">Run a question to see the evidence trace.</div>';
+  $('xaiRaw').style.display='none';$('xaiArrow').textContent='▶';
+  status('xaiStatus','','');
+}
+
+function toggleXaiDetail(){
+  const d=$('xaiRaw'),a=$('xaiArrow');
+  const show=d.style.display==='none';
+  d.style.display=show?'block':'none';
+  a.textContent=show?'▼':'▶';
+}
+
+/* ════════════════════════════════════════════════
+   Boot — load KG tab immediately
+════════════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  // Size all canvases after layout
+  ['kgCv','archCv','curveCv','domF1Cv','embedCv'].forEach(id=>{
+    const cv=$(id);if(cv)sizeCanvas(cv);
+  });
+  loadKGTab();
+});
+window.addEventListener('resize',()=>{
+  ['kgCv','archCv','curveCv','domF1Cv','embedCv'].forEach(id=>{
+    const cv=$(id);if(cv)sizeCanvas(cv);
+  });
+});
+</script>
+</body>
 </html>
-

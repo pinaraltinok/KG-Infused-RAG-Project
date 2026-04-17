@@ -1,0 +1,1131 @@
+[
+  {
+    "question": "Aşk ve Kin filminin yönetmeninin doğduğu yer neresidir?",
+    "film_adi": "aşk ve kin (film)",
+    "yonetmen_adi": "turgut demirag",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "sebastea (see)",
+    "id_path": ["Q6691616","Q501820","Q107401"],
+    "relation_path": ["DIRECTOR","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "The Blue Exile filminin yönetmeninin doğduğu yer neresidir?",
+    "film_adi": "The Blue Exile",
+    "yonetmen_adi": "erden kiral",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "gölcük, kocaeli",
+    "id_path": ["Q6091358","Q1349104","Q27162"],
+    "relation_path": ["DIRECTOR","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "İnek Şaban filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "i̇nek şaban",
+    "yonetmen_adi": "Osman Fahir Seden",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "state artist",
+    "id_path": ["Q6062891","Q7107075","Q7603040"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Canım Sana Feda filminin yönetmeninin doğduğu yer neresidir?",
+    "film_adi": "canım sana feda",
+    "yonetmen_adi": "halit refiğ",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "ismir, turkey",
+    "id_path": ["Q18712832","Q2237841","Q35997"],
+    "relation_path": ["DIRECTOR","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "İnek Şaban filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "i̇nek şaban",
+    "yonetmen_adi": "Osman Fahir Seden",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "state artist",
+    "id_path": ["Q6062891","Q7107075","Q7603040"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Çöpçüler Kralı filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "Çöpçüler krali",
+    "yonetmen_adi": "Zeki Okten",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "Sutherland Award",
+    "id_path": ["Q7744599","Q2739722","Q7650000"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "The Unforgettable Director of Love Movies filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "The Unforgettable Director of Love Movies",
+    "yonetmen_adi": "yavuz turgul",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "Presidential Culture and Arts Grand Awards",
+    "id_path": ["Q6073648","Q8050423","Q7241424"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Kapıcılar Kralı filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "Kapicilar Krali",
+    "yonetmen_adi": "Zeki Okten",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "Sutherland Award",
+    "id_path": ["Q12810220","Q2739722","Q7650000"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Cennetin Kapısı filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "cennetin kapisi",
+    "yonetmen_adi": "Bumin Gaffar Çitanak",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "state artist",
+    "id_path": ["Q18712839","Q5448241","Q7603040"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Kanlarıyla Ödediler filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "kanlarıyla ödediler",
+    "yonetmen_adi": "Osman Fahir Seden",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "state artist",
+    "id_path": ["Q20002628","Q7107075","Q7603040"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Kanun Namına filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "Kanun namina",
+    "yonetmen_adi": "lütfi akad",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "Presidential Culture and Arts Grand Awards",
+    "id_path": ["Q6083314","Q3176600","Q7241424"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "İntikam Alevi filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "İntikam Alevi",
+    "yonetmen_adi": "Osman Fahir Seden",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "state artist",
+    "id_path": ["Q6051878","Q7107075","Q7603040"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Şaka ile Karışık filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "şaka ile karışık",
+    "yonetmen_adi": "Osman Fahir Seden",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "state artist",
+    "id_path": ["Q6054315","Q7107075","Q7603040"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "Katil filminin yönetmeninin aldığı ödül nedir?",
+    "film_adi": "Katil (film)",
+    "yonetmen_adi": "lütfi akad",
+    "iliski": "AWARD_RECEIVED",
+    "cevap": "Presidential Culture and Arts Grand Awards",
+    "id_path": ["Q6046323","Q3176600","Q7241424"],
+    "relation_path": ["DIRECTOR","AWARD_RECEIVED"]
+  },
+  {
+    "question": "10 to 11 filminde oynayan Nejat İşler'in doğduğu yer neresidir?",
+    "film_adi": "10 to 11",
+    "oyuncu_adi": "Nejat İşler",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q3459778","Q3337865","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "A Touch of Spice filminde oynayan Giórgos Chorafás'ın doğduğu yer neresidir?",
+    "film_adi": "A Touch of Spice",
+    "oyuncu_adi": "Giórgos Chorafás",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Sport in Paris",
+    "id_path": ["Q59687","Q3102524","Q90"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Ah Nerede filminde oynayan Adile Nasit'in doğduğu yer neresidir?",
+    "film_adi": "Ah Nerede",
+    "oyuncu_adi": "Adile Nasit",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q6081761","Q357260","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Anadolu Kartalları filminde oynayan Engin Altan Düzyatan'ın doğduğu yer neresidir?",
+    "film_adi": "Anadolu Kartalları",
+    "oyuncu_adi": "Engin Altan Düzyatan",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "ismir, turkey",
+    "id_path": ["Q2845101","Q3054263","Q35997"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Aşk Fırtınası filminde oynayan Kartal Tibet'in doğduğu yer neresidir?",
+    "film_adi": "Ask Firtinasi",
+    "oyuncu_adi": "kartal tibet",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q18712767","Q374415","Q3640"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Aslan Pençesi filminde oynayan Ayhan Işık'ın doğduğu yer neresidir?",
+    "film_adi": "Aslan Pençesi",
+    "oyuncu_adi": "ayhan işık",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "ismir, turkey",
+    "id_path": ["Q18712768","Q792949","Q35997"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Beynelmilel filminde oynayan Cezmi Başkın'ın doğduğu yer neresidir?",
+    "film_adi": "Beynelmilel (film)",
+    "oyuncu_adi": "Cezmi Baskin",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q7742278","Q6103860","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Beyond the Hill filminde oynayan Berk Hakman'ın doğduğu yer neresidir?",
+    "film_adi": "Beyond the Hill",
+    "oyuncu_adi": "berk hakman",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q6084082","Q6093425","Q3640"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Beş Vakit filminde oynayan Selma Ergeç'in doğduğu yer neresidir?",
+    "film_adi": "Beş Vakit",
+    "oyuncu_adi": "Selma Ergeç",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "waldbühne hamm-heessen",
+    "id_path": ["Q2920518","Q77005","Q2880"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Bitter Life filminde oynayan Nebahat Çehre'nin doğduğu yer neresidir?",
+    "film_adi": "Bitter Life (film)",
+    "oyuncu_adi": "Nebahat Çehre",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "samsun, turkey",
+    "id_path": ["Q12835393","Q2427828","Q160450"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Black and White filminde oynayan Derya Alabora'nın doğduğu yer neresidir?",
+    "film_adi": "Black and White (2010 film)",
+    "oyuncu_adi": "Derya Alabora",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q4922219","Q249758","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Ceto, the Foolish Millionaire filminde oynayan Gazanfer Özcan'ın doğduğu yer neresidir?",
+    "film_adi": "Ceto, the Foolish Millionaire",
+    "oyuncu_adi": "gazanfer ozcan",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q25999908","Q2075940","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Circle filminde oynayan Nazan Kesal'ın doğduğu yer neresidir?",
+    "film_adi": "Circle (2014 film)",
+    "oyuncu_adi": "nazan kesal",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Manisa Ili Province",
+    "id_path": ["Q17277912","Q6099299","Q130553"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Çöl Kartalı filminde oynayan Cüneyt Arkın'ın doğduğu yer neresidir?",
+    "film_adi": "Col Kartali",
+    "oyuncu_adi": "cüneyt arkın",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "alpu",
+    "id_path": ["Q18712859","Q927967","Q2671060"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Coming Soon filminde oynayan Ayşen Gruda'nın doğduğu yer neresidir?",
+    "film_adi": "Coming Soon (2014 film)",
+    "oyuncu_adi": "aysen gruda",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Yesilköy",
+    "id_path": ["Q19473425","Q4831964","Q1010949"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Crossing the Bridge: The Sound of Istanbul filminde oynayan Ceza'nın doğduğu yer neresidir?",
+    "film_adi": "Crossing the Bridge: The Sound of Istanbul",
+    "oyuncu_adi": "Ceza",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Üsküdar",
+    "id_path": ["Q573156","Q282782","Q326339"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Dar Alanda Kısa Paslaşmalar filminde oynayan Müjde Ar'ın doğduğu yer neresidir?",
+    "film_adi": "Dar alanda kısa paslaşmalar",
+    "oyuncu_adi": "Müjde Ar",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q12809142","Q12811020","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Davaro filminde oynayan Adile Nasit'in doğduğu yer neresidir?",
+    "film_adi": "Davaro",
+    "oyuncu_adi": "Adile Nasit",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q6806566","Q357260","Q406"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Der Ehrenmord filminde oynayan Talat Bulut'un doğduğu yer neresidir?",
+    "film_adi": "Der Ehrenmord",
+    "oyuncu_adi": "Talat Bulut",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "Sarîqamîş",
+    "id_path": ["Q1769370","Q3656276","Q844542"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Devrim Arabaları filminde oynayan Ali Düşenkalkar'ın doğduğu yer neresidir?",
+    "film_adi": "Devrim Arabaları",
+    "oyuncu_adi": "Ali Dusenkalkar",
+    "iliski": "PLACE_OF_BIRTH",
+    "cevap": "lefkoåÿa",
+    "id_path": ["Q982946","Q4724766","Q3856"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH"]
+  },
+  {
+    "question": "Duvara Karşı filminin yapım şirketinin merkezi nerededir?",
+    "film_adi": "Duvara karşı",
+    "yapim_sirketi_adi": "Emelka Studios",
+    "iliski": "HEADQUARTERS_LOCATION",
+    "cevap": "grünwald, bavaria",
+    "id_path": ["Q325648","Q648034","Q220090"],
+    "relation_path": ["PRODUCTION_COMPANY","HEADQUARTERS_LOCATION"]
+  },
+  {
+    "question": "The Republic filminin yapım şirketinin merkezi nerededir?",
+    "film_adi": "The Republic (film)",
+    "yapim_sirketi_adi": "turkish radio and television network",
+    "iliski": "HEADQUARTERS_LOCATION",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q6091112","Q83389","Q3640"],
+    "relation_path": ["PRODUCTION_COMPANY","HEADQUARTERS_LOCATION"]
+  },
+  {
+    "question": "The Unforgettable Director of Love Movies filminin yapım şirketinin merkezi nerededir?",
+    "film_adi": "The Unforgettable Director of Love Movies",
+    "yapim_sirketi_adi": "Erler Film",
+    "iliski": "HEADQUARTERS_LOCATION",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q6073648","Q5389773","Q406"],
+    "relation_path": ["PRODUCTION_COMPANY","HEADQUARTERS_LOCATION"]
+  },
+  {
+    "question": "Turkstar filminin yapım şirketinin merkezi nerededir?",
+    "film_adi": "Turkstar",
+    "yapim_sirketi_adi": "Goodson-Todman",
+    "iliski": "HEADQUARTERS_LOCATION",
+    "cevap": "united kingdom/london",
+    "id_path": ["Q4189239","Q520445","Q84"],
+    "relation_path": ["PRODUCTION_COMPANY","HEADQUARTERS_LOCATION"]
+  },
+  {
+    "question": "Yetenek Sizsiniz Türkiye filminin yapım şirketinin merkezi nerededir?",
+    "film_adi": "Yetenek Sizsiniz Turkiye",
+    "yapim_sirketi_adi": "Goodson-Todman",
+    "iliski": "HEADQUARTERS_LOCATION",
+    "cevap": "united kingdom/london",
+    "id_path": ["Q6095898","Q520445","Q84"],
+    "relation_path": ["PRODUCTION_COMPANY","HEADQUARTERS_LOCATION"]
+  },
+  {
+    "question": "10 to 11 filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "10 to 11",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q3459778","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "A Touch of Spice filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "A Touch of Spice",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q59687","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Beynelmilel filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Beynelmilel (film)",
+    "mekan_adi": "adıyaman ili province",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q7742278","Q43924","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Black and White filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Black and White (2010 film)",
+    "mekan_adi": "Angora, Turkey",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q4922219","Q3640","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Devrim Arabaları filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Devrim Arabaları",
+    "mekan_adi": "Eski-Shehr",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q982946","Q168866","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Duvara Karşı filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Duvara karşı",
+    "mekan_adi": "The Free and Hanseatic City of Hamburg",
+    "iliski_adi": "COUNTRY",
+    "cevap": "iso 3166-1:fr",
+    "id_path": ["Q325648","Q1055","Q142"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Future Lasts Forever filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Future Lasts Forever",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q5510699","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Immortelle filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Immortelle",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q3204027","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Intersection filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Intersection (2010 film)",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q7728180","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Kaybedenler Kulübü filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Kaybedenler Kulübü",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "byzantine (eastern roman) empire",
+    "id_path": ["Q6683587","Q406","Q12544"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Kolpaçino: Bomba filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Kolpaçino: Bomba",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q6427861","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Min Dît filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Min Dît",
+    "mekan_adi": "Kara Amid",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q831943","Q83387","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Our Grand Despair filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Our Grand Despair",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q6082061","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Pandora'nın Kutusu filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Pandora'nın Kutusu",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q3206830","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Paper filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Paper (film)",
+    "mekan_adi": "Angora, Turkey",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q1402686","Q3640","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Voice of My Father filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Voice of My Father",
+    "mekan_adi": "Albistan",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q7939560","Q117181","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Zephyr filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Zephyr (film)",
+    "mekan_adi": "north anatolia",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q8069305","Q155533","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Zerre filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "Zerre (film)",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q13406147","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "And Then What? filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "and then what?",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "Ottoman empire",
+    "id_path": ["Q2882584","Q406","Q12560"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Aşk Tesadüfleri Sever filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "ask tesadüfleri sever",
+    "mekan_adi": "Angora, Turkey",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q4808148","Q3640","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Autumn filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "autumn (2007 film)",
+    "mekan_adi": "north anatolia",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q4827126","Q155533","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Bal filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "bal (film",
+    "mekan_adi": "Kaçkar Dağları",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q804582","Q975280","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Bi Küçük Eylül Meselesi filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "bi küçük eylül meselesi",
+    "mekan_adi": "classical tenedos",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q17434124","Q211817","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Celal and Ceren filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "celal and ceren",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q4027352","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Do Not Forget Me Istanbul filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "do not forget me istanbul",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "Ottoman empire",
+    "id_path": ["Q20065085","Q406","Q12560"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Güzel Günler Göreceğiz filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "güzel günler görecegiz",
+    "mekan_adi": "istanbul (turkey)",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q6078936","Q406","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "İki Dil Bir Bavul filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "iki dil bir bavul",
+    "mekan_adi": "Bingöl",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q7091610","Q208472","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Im Juli filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "im juli",
+    "mekan_adi": "The Free and Hanseatic City of Hamburg",
+    "iliski_adi": "COUNTRY",
+    "cevap": "North German Federation",
+    "id_path": ["Q494719","Q1055","Q150981"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "Inside filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "inside (2012 film)",
+    "mekan_adi": "Angora, Turkey",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q16736826","Q3640","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "İklimler filminin geçtiği yerin bulunduğu ülke hangisidir?",
+    "film_adi": "i̇klimler",
+    "mekan_adi": "Agri Ili Province",
+    "iliski_adi": "COUNTRY",
+    "cevap": "turkiye",
+    "id_path": ["Q2758737","Q80051","Q43"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY"]
+  },
+  {
+    "question": "10 to 11 filminde oynayan Nejat İşler'in doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "10 to 11",
+    "oyuncu_adi": "Nejat İşler",
+    "dogdugu_sehir": "istanbul (turkey)",
+    "cevap": "turkiye",
+    "id_path": ["Q3459778","Q3337865","Q406","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "A Touch of Spice filminde oynayan Ieroklis Michailidis'in doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "A Touch of Spice",
+    "oyuncu_adi": "ieroklis michailidis",
+    "dogdugu_sehir": "nea charavgi",
+    "cevap": "hellada",
+    "id_path": ["Q59687","Q5985980","Q3393439","Q41"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Ah Nerede filminde oynayan Adile Nasit'in doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Ah Nerede",
+    "oyuncu_adi": "Adile Nasit",
+    "dogdugu_sehir": "istanbul (turkey)",
+    "cevap": "turkiye",
+    "id_path": ["Q6081761","Q357260","Q406","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Anadolu Kartalları filminde oynayan Özge Özpirinçci'nin doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Anadolu Kartalları",
+    "oyuncu_adi": "Ozge Ozpirincci",
+    "dogdugu_sehir": "istanbul (turkey)",
+    "cevap": "turkiye",
+    "id_path": ["Q2845101","Q307808","Q406","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Aşk Fırtınası filminde oynayan Kartal Tibet'in doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Ask Firtinasi",
+    "oyuncu_adi": "kartal tibet",
+    "dogdugu_sehir": "Angora, Turkey",
+    "cevap": "turkiye",
+    "id_path": ["Q18712767","Q374415","Q3640","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Aslan Pençesi filminde oynayan Ayhan Işık'ın doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Aslan Pençesi",
+    "oyuncu_adi": "ayhan işık",
+    "dogdugu_sehir": "ismir, turkey",
+    "cevap": "Ottoman empire",
+    "id_path": ["Q18712768","Q792949","Q35997","Q12560"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Beynelmilel filminde oynayan Meral Katı'nın doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Beynelmilel (film)",
+    "oyuncu_adi": "Meral Katı",
+    "dogdugu_sehir": "Angora, Turkey",
+    "cevap": "turkiye",
+    "id_path": ["Q7742278","Q3306251","Q3640","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Beyond the Hill filminde oynayan Berk Hakman'ın doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Beyond the Hill",
+    "oyuncu_adi": "berk hakman",
+    "dogdugu_sehir": "Angora, Turkey",
+    "cevap": "turkiye",
+    "id_path": ["Q6084082","Q6093425","Q3640","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Beş Vakit filminde oynayan Taner Birsel'in doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Beş Vakit",
+    "oyuncu_adi": "taner birsel",
+    "dogdugu_sehir": "History of Akhisar",
+    "cevap": "turkiye",
+    "id_path": ["Q2920518","Q6088017","Q209905","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Bitter Life filminde oynayan Ekrem Şerif Uçak'ın doğduğu şehrin ülkesi hangisidir?",
+    "film_adi": "Bitter Life (film)",
+    "oyuncu_adi": "ekrem şerif uçak",
+    "dogdugu_sehir": "Angora, Turkey",
+    "cevap": "turkiye",
+    "id_path": ["Q12835393","Q4115962","Q3640","Q43"],
+    "relation_path": ["CAST_MEMBER","PLACE_OF_BIRTH","COUNTRY"]
+  },
+  {
+    "question": "Kolpaçino: Bomba filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Kolpaçino: Bomba",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q6427861","Q406","Q12560","Q406"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Min Dît filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Min Dît",
+    "hikaye_mekani": "Kara Amid",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q831943","Q83387","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Our Grand Despair filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Our Grand Despair",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Bursa, Turkey",
+    "id_path": ["Q6082061","Q406","Q12560","Q40738"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Pandora'nın Kutusu filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Pandora'nın Kutusu",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Archbishopric of Adrianopolis",
+    "id_path": ["Q3206830","Q406","Q12560","Q43387"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Paper filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Paper (film)",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q1402686","Q406","Q12560","Q406"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Voice of My Father filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Voice of My Father",
+    "hikaye_mekani": "Albistan",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q7939560","Q117181","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Zephyr filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Zephyr (film)",
+    "hikaye_mekani": "north anatolia",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q8069305","Q155533","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Zerre filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "Zerre (film)",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q13406147","Q406","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "And Then What? filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "and then what?",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "byzantine (eastern roman) empire",
+    "cevap": "constantinopolis",
+    "id_path": ["Q2882584","Q406","Q12544","Q16869"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Aşk Tesadüfleri Sever filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "ask tesadüfleri sever",
+    "hikaye_mekani": "Angora, Turkey",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q4808148","Q3640","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Autumn filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "autumn (2007 film)",
+    "hikaye_mekani": "north anatolia",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q4827126","Q155533","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Bal filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "bal (film",
+    "hikaye_mekani": "Kaçkar Dağları",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q804582","Q975280","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Bi Küçük Eylül Meselesi filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "bi küçük eylül meselesi",
+    "hikaye_mekani": "classical tenedos",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q17434124","Q211817","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Celal and Ceren filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "celal and ceren",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Sögüt",
+    "id_path": ["Q4027352","Q406","Q12560","Q768506"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Do Not Forget Me Istanbul filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "do not forget me istanbul",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q20065085","Q406","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Güzel Günler Göreceğiz filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "güzel günler görecegiz",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "byzantine (eastern roman) empire",
+    "cevap": "constantinopolis",
+    "id_path": ["Q6078936","Q406","Q12544","Q16869"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "İki Dil Bir Bavul filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "iki dil bir bavul",
+    "hikaye_mekani": "Bingöl",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q7091610","Q208472","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Im Juli filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "im juli",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Sögüt",
+    "id_path": ["Q494719","Q406","Q12560","Q768506"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Inside filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "inside (2012 film)",
+    "hikaye_mekani": "Angora, Turkey",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q16736826","Q3640","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "İklimler filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "i̇klimler",
+    "hikaye_mekani": "kaş",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q2758737","Q1004438","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Killing in Istanbul filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "killing in istanbul",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Archbishopric of Adrianopolis",
+    "id_path": ["Q6407788","Q406","Q12560","Q43387"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Köprüdekiler filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "köprüdekiler",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Archbishopric of Adrianopolis",
+    "id_path": ["Q6816310","Q406","Q12560","Q43387"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Long Story filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "long story",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Archbishopric of Adrianopolis",
+    "id_path": ["Q6094757","Q406","Q12560","Q43387"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Love in Another Language filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "love in another language",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "byzantine (eastern roman) empire",
+    "cevap": "constantinopolis",
+    "id_path": ["Q4167177","Q406","Q12544","Q16869"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Milk filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "milk (2008 turkish film)",
+    "hikaye_mekani": "Tire, İzmir",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q6570602","Q630533","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Romantik Komedi filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "romantik komedi",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "turkiye",
+    "cevap": "Angora, Turkey",
+    "id_path": ["Q6073585","Q406","Q43","Q3640"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Wrong Rosary filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "wrong rosary",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "Bursa, Turkey",
+    "id_path": ["Q8038623","Q406","Q12560","Q40738"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Zenne Dancer filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "zenne dancer",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "byzantine (eastern roman) empire",
+    "cevap": "constantinopolis",
+    "id_path": ["Q6099745","Q406","Q12544","Q16869"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Üç Maymun filminin geçtiği yerin bulunduğu ülkenin başkenti neresidir?",
+    "film_adi": "üç maymun",
+    "hikaye_mekani": "istanbul (turkey)",
+    "ulke_adi": "Ottoman empire",
+    "cevap": "istanbul (turkey)",
+    "id_path": ["Q2352649","Q406","Q12560","Q406"],
+    "relation_path": ["NARRATIVE_LOCATION","COUNTRY","CAPITAL"]
+  },
+  {
+    "question": "Dedemin İnsanları filminin orijinal dilinin konuşulduğu ülkenin para birimi nedir?",
+    "film_adi": "dedemin i̇nsanları",
+    "film_dili": "Ehhnvika",
+    "ulke_adi": "turkiye",
+    "cevap": "turkish lira (old)",
+    "id_path": ["Q6070309","Q9129","Q43","Q172872"],
+    "relation_path": ["ORIGINAL_LANGUAGE_OF_FILM_OR_TV_SHOW","COUNTRY","CURRENCY"]
+  },
+  {
+    "question": "A Touch of Spice filminin orijinal dilinin konuşulduğu ülkenin para birimi nedir?",
+    "film_adi": "A Touch of Spice",
+    "film_dili": "Ehhnvika",
+    "ulke_adi": "turkiye",
+    "cevap": "turkish lira (old)",
+    "id_path": ["Q59687","Q9129","Q43","Q172872"],
+    "relation_path": ["ORIGINAL_LANGUAGE_OF_FILM_OR_TV_SHOW","COUNTRY","CURRENCY"]
+  },
+  {
+    "question": "Future Lasts Forever ve Babam ve Oğlum filmlerinin ortak türü nedir?",
+    "film_1": "Future Lasts Forever",
+    "film_2": "babam and oğlum",
+    "yonetmen_1": "ozcan alper",
+    "yonetmen_2": "Çagan Irmak",
+    "ortak_tur": "drama movie",
+    "id_path": ["Q5510699","Q797577","Q8079111","Q272718"]
+  },
+  {
+    "question": "Yor, the Hunter from the Future ve Killing in Istanbul filmlerinin ortak türü nedir?",
+    "film_1": "yor, the hunter from the future",
+    "film_2": "killing in istanbul",
+    "yonetmen_1": "anthony m. dawson",
+    "yonetmen_2": "yılmaz atadeniz",
+    "ortak_tur": "Mythological film",
+    "id_path": ["Q1307030","Q6407788","Q603216","Q6051778"]
+  },
+  {
+    "question": "İçerde ve For Love and Honor filmlerinin ortak türü nedir?",
+    "film_1": "İçerde",
+    "film_2": "For Love and Honor",
+    "yonetmen_1": "Uluç bayraktar",
+    "yonetmen_2": "Ömer Vargı",
+    "ortak_tur": "film action",
+    "id_path": ["Q27184760","Q928436","Q12812374","Q6021948"]
+  },
+  {
+    "question": "Çöl Kartalı ve Aşk Tesadüfleri Sever filmlerinin ortak türü nedir?",
+    "film_1": "Col Kartali",
+    "film_2": "ask tesadüfleri sever",
+    "yonetmen_1": "halit refiğ",
+    "yonetmen_2": "ömer faruk sorak",
+    "ortak_tur": "Romantic movie",
+    "id_path": ["Q18712859","Q4808148","Q2237841","Q6047481"]
+  },
+  {
+    "question": "Namuslu ve Kolpaçino: Bomba filmlerinin ortak türü nedir?",
+    "film_1": "namuslu",
+    "film_2": "Kolpaçino: Bomba",
+    "yonetmen_1": "Ertem Egilmez",
+    "yonetmen_2": "safak sezer",
+    "ortak_tur": "service comedy",
+    "id_path": ["Q3335501","Q6427861","Q3057501","Q8082387"]
+  },
+  {
+    "question": "Paper ve Yedi Evlat İki Damat filmlerinin ortak türü nedir?",
+    "film_1": "Paper (film)",
+    "film_2": "Yedi Evlat İki Damat",
+    "yonetmen_1": "Sinan Cetin",
+    "yonetmen_2": "halit refiğ",
+    "ortak_tur": "Comedy drama",
+    "id_path": ["Q1402686","Q6064376","Q2288769","Q2237841"]
+  },
+  {
+    "question": "Akvaryumda Sessiz Sakin ve Son Buluşma filmlerinin ortak türü nedir?",
+    "film_1": "akvaryumda sessiz sakin",
+    "film_2": "son buluşma",
+    "yonetmen_1": "Tayfun Belet",
+    "yonetmen_2": "Nesli Colgecen",
+    "ortak_tur": "Documentary series",
+    "id_path": ["Q26963199","Q7560571","Q26702984","Q6068273"]
+  },
+  {
+    "question": "And Then What? ve Celal and Ceren filmlerinin ortak türü nedir?",
+    "film_1": "and then what?",
+    "film_2": "celal and ceren",
+    "yonetmen_1": "Özcan Deniz",
+    "yonetmen_2": "Togan Gokbakar",
+    "ortak_tur": "Love comedy",
+    "id_path": ["Q2882584","Q4027352","Q307737","Q7813033"]
+  },
+  {
+    "question": "Aslan Pençesi ve Worst Movie Death Scene Ever filmlerinin ortak türü nedir?",
+    "film_1": "Aslan Pençesi",
+    "film_2": "worst movie death scene ever",
+    "yonetmen_1": "memduh un",
+    "yonetmen_2": "Orhan Aksoy",
+    "ortak_tur": "Crime Film",
+    "id_path": ["Q18712768","Q3492103","Q6815170","Q6033250"]
+  },
+  {
+    "question": "Yor, the Hunter from the Future ve G.O.R.A. filmlerinin ortak türü nedir?",
+    "film_1": "yor, the hunter from the future",
+    "film_2": "G O R A",
+    "yonetmen_1": "anthony m. dawson",
+    "yonetmen_2": "ömer faruk sorak",
+    "ortak_tur": "science-fiction movies",
+    "id_path": ["Q1307030","Q934718","Q603216","Q6047481"]
+  },
+  {
+    "question": "Grain ve İçerde filmlerinin ortak türü nedir?",
+    "film_1": "grain (film)",
+    "film_2": "İçerde",
+    "yonetmen_1": "Semih Kaplanoğlu",
+    "yonetmen_2": "Uluç bayraktar",
+    "ortak_tur": "dramatic arts",
+    "id_path": ["Q19954477","Q27184760","Q1373349","Q12812374"]
+  },
+  {
+    "question": "Osman Sınav tarafından yönetilen ve İstanbul'da geçen film hangisidir?",
+    "cevap_film": "long story",
+    "kısıt_yönetmen": "osman sinav",
+    "kısıt_mekan": "istanbul (turkey)",
+    "id_path": ["Q6094757","Q7107110","Q406"],
+    "relation_path": ["DIRECTOR","NARRATIVE_LOCATION"]
+  },
+  {
+    "question": "Tolga Örnek tarafından yönetilen ve İstanbul'da geçen film hangisidir?",
+    "cevap_film": "Kaybedenler Kulübü",
+    "kısıt_yönetmen": "tolga örnek",
+    "kısıt_mekan": "istanbul (turkey)",
+    "id_path": ["Q6683587","Q7814245","Q406"],
+    "relation_path": ["DIRECTOR","NARRATIVE_LOCATION"]
+  },
+  {
+    "question": "Semih Kaplanoğlu tarafından yönetilen ve Kaçkar Dağları'nda geçen film hangisidir?",
+    "cevap_film": "bal (film",
+    "kısıt_yönetmen": "Semih Kaplanoğlu",
+    "kısıt_mekan": "Kackar Daglari",
+    "id_path": ["Q804582","Q1373349","Q975280"],
+    "relation_path": ["DIRECTOR","NARRATIVE_LOCATION"]
+  },
+  {
+    "question": "Çağan Irmak tarafından yönetilen ve Ege Denizi'nde geçen film hangisidir?",
+    "cevap_film": "babam and oğlum",
+    "kısıt_yönetmen": "Çagan Irmak",
+    "kısıt_mekan": "aegean sea",
+    "id_path": ["Q797577","Q272718","Q34575"],
+    "relation_path": ["DIRECTOR","NARRATIVE_LOCATION"]
+  },
+  {
+    "question": "Togan Gökbakar tarafından yönetilen ve İstanbul'da geçen film hangisidir?",
+    "cevap_film": "celal and ceren",
+    "kısıt_yönetmen": "Togan Gokbakar",
+    "kısıt_mekan": "istanbul (turkey)",
+    "id_path": ["Q4027352","Q7813033","Q406"],
+    "relation_path": ["DIRECTOR","NARRATIVE_LOCATION"]
+  }
+]

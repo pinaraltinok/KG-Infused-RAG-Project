@@ -13,6 +13,78 @@ from alias_db import alias_db_path_from_env, query_aliases, query_text, text_db_
 from llm_language import detect_language, wrap_prompt
 
 
+def _infer_intent(query: str, domain: str | None = None) -> dict[str, Any]:
+    q = _normalize_text(query)
+    d = (domain or "").strip().lower()
+    intent = "generic"
+    rel_types: set[str] = set()
+    rel_ids: set[str] = set()
+
+    if "dogum yeri" in q or "dogdu" in q or "dogmustur" in q or "birth place" in q or "place of birth" in q:
+        intent = "birth_place"
+        rel_types.update({"PLACE_OF_BIRTH", "BIRTH_PLACE", "BIRTHPLACE"})
+        rel_ids.update({"P19"})
+    elif "odul" in q or "odulu" in q or "award" in q:
+        intent = "award"
+        rel_types.update({"AWARD_RECEIVED", "NOMINATED_FOR", "AWARD"})
+        rel_ids.update({"P166"})
+    elif "ulkesi" in q or "country" in q:
+        intent = "country"
+        rel_types.update({"COUNTRY", "COUNTRY_OF_CITIZENSHIP", "COUNTRY_OF_ORIGIN"})
+        rel_ids.update({"P17", "P27", "P495"})
+    elif "yonetmen" in q or "director" in q:
+        intent = "director"
+        rel_types.update({"DIRECTOR", "FILM_DIRECTOR", "DIRECTED_BY"})
+        rel_ids.update({"P57"})
+    elif "teknik direktor" in q or "coach" in q or "manager" in q:
+        intent = "coach"
+        rel_types.update({"COACH", "HEAD_COACH", "MANAGER"})
+        rel_ids.update({"P286"})
+
+    if d == "football":
+        rel_types.update({"MEMBER_OF_SPORTS_TEAM", "COACH", "HEAD_COACH", "COUNTRY"})
+        rel_ids.update({"P54", "P286", "P17"})
+    elif d == "cinema":
+        rel_types.update({"DIRECTOR", "CAST_MEMBER", "COUNTRY_OF_ORIGIN", "AWARD_RECEIVED"})
+        rel_ids.update({"P57", "P161", "P495", "P166"})
+    elif d == "company":
+        rel_types.update({"FOUNDER", "HEADQUARTERS_LOCATION", "INDUSTRY", "SUBSIDIARY"})
+        rel_ids.update({"P112", "P159", "P452", "P355"})
+    elif d == "music":
+        rel_types.update({"GENRE", "RECORD_LABEL", "AWARD_RECEIVED", "PLACE_OF_BIRTH"})
+        rel_ids.update({"P136", "P264", "P166", "P19"})
+    elif d == "academia":
+        rel_types.update({"EDUCATED_AT", "EMPLOYER", "FIELD_OF_WORK", "ACADEMIC_DEGREE"})
+        rel_ids.update({"P69", "P108", "P101", "P512"})
+
+    return {"name": intent, "relation_types": rel_types, "relation_ids": rel_ids}
+
+
+def _relation_match_score(relation_type: str | None, relation_id: str | None, intent: dict[str, Any]) -> float:
+    if not intent["relation_types"] and not intent["relation_ids"]:
+        return 0.0
+    rt = str(relation_type or "").upper()
+    rid = str(relation_id or "").upper()
+    score = 0.0
+    if rt in intent["relation_types"]:
+        score += 1.0
+    if rid in intent["relation_ids"]:
+        score += 1.0
+    # lightweight fuzzy for converted relation labels
+    if not score and intent["name"] in {"birth_place", "director", "coach", "country", "award"}:
+        if intent["name"] == "birth_place" and "BIRTH" in rt:
+            score = 0.5
+        elif intent["name"] == "director" and "DIRECT" in rt:
+            score = 0.5
+        elif intent["name"] == "coach" and ("COACH" in rt or "MANAGER" in rt):
+            score = 0.5
+        elif intent["name"] == "country" and "COUNTRY" in rt:
+            score = 0.5
+        elif intent["name"] == "award" and "AWARD" in rt:
+            score = 0.5
+    return score
+
+
 @dataclass(frozen=True)
 class SeedEntity:
     id: str
@@ -226,7 +298,10 @@ class OllamaLLM:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=self.timeout_s) as resp:
+        # Some local models can be slow for multi-step KG-RAG prompts.
+        # Keep a higher default for better reliability.
+        timeout = max(self.timeout_s, float(os.getenv("OLLAMA_TIMEOUT_S", "120")))
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
             body = resp.read().decode("utf-8")
         parsed = json.loads(body)
         return parsed["message"]["content"]
@@ -302,7 +377,7 @@ class LLMTripleSelector:
             + "\nReturn ONLY the indices of relevant triples, separated by commas. "
             "If no triples are relevant, return \"NONE\"."
         )
-        raw = self.llm.generate(wrap_prompt(prompt, lang=lang)).strip()
+        raw = self.llm.generate(wrap_prompt(prompt, lang=lang, style="work")).strip()
         if "NONE" in raw.upper():
             return []
 
@@ -437,6 +512,24 @@ def find_seed_entities_keyword(
             if prev is None or ent.score > prev.score:
                 best[eid] = ent
 
+    # Resolve missing names for seeds (e.g., alias/text DB hits).
+    # This improves downstream LLM triple selection by providing human-readable entity names.
+    missing_name_ids = [eid for (eid, ent) in best.items() if ent.name is None]
+    if missing_name_ids:
+        rows = neo.run(
+            """
+            UNWIND $ids AS id
+            MATCH (e:Entity {entityId: id})
+            RETURN e.entityId AS id, e.name AS name
+            """,
+            {"ids": missing_name_ids},
+        )
+        id_to_name = {str(r["id"]): (None if r.get("name") is None else str(r.get("name"))) for r in rows if r.get("id") is not None}
+        for eid, name in id_to_name.items():
+            prev = best.get(eid)
+            if prev is not None and name:
+                best[eid] = SeedEntity(id=prev.id, name=name, score=prev.score)
+
     # 5) Fallback CONTAINS (lowest precision)
     if not best:
         qn = _normalize_text(query)
@@ -456,6 +549,7 @@ def find_seed_entities_keyword(
             best[eid] = SeedEntity(id=eid, name=(None if r.get("name") is None else str(r.get("name"))), score=1.0)
 
     ranked = sorted(best.values(), key=lambda s: s.score, reverse=True)
+    intent = _infer_intent(query, domain=domain)
 
     # Türkiye-domain re-ranking/filtering (assignment focus).
     # If TURKEY_ENTITY_ID is present in your graph (typically Q43), we prefer seeds connected by :COUNTRY.
@@ -479,6 +573,31 @@ def find_seed_entities_keyword(
                 reverse=True,
             )
 
+    # Intent-aware re-ranking: prioritize seeds whose outgoing neighborhood matches expected relations.
+    if candidate_ids and (intent["relation_types"] or intent["relation_ids"]):
+        rows = neo.run(
+            """
+            UNWIND $ids AS id
+            MATCH (e:Entity {entityId: id})-[r]->()
+            RETURN id AS id, collect(DISTINCT type(r))[0..120] AS rel_types, collect(DISTINCT r.relationId)[0..120] AS rel_ids
+            """,
+            {"ids": candidate_ids},
+        )
+        rel_score: dict[str, float] = {}
+        for r in rows:
+            eid = str(r["id"])
+            score = 0.0
+            for rt in r.get("rel_types", []) or []:
+                score += _relation_match_score(str(rt), None, intent)
+            for rid in r.get("rel_ids", []) or []:
+                score += _relation_match_score(None, str(rid), intent)
+            rel_score[eid] = score
+        ranked = sorted(
+            ranked,
+            key=lambda s: (rel_score.get(s.id, 0.0), s.score),
+            reverse=True,
+        )
+
     return ranked[:k]
 
 
@@ -492,6 +611,8 @@ def get_one_hop_neighbors(
     """
     Matches tutorial Step 6.3, but with a per-source LIMIT to keep each round bounded.
     """
+    entity_ids_list = list(entity_ids)
+    visited_ids_list = list(visited_ids)
     rows = neo.run(
         """
         UNWIND $entity_ids AS eid
@@ -506,7 +627,11 @@ def get_one_hop_neighbors(
           neighbor.name AS target_name
         LIMIT $lim
         """,
-        {"entity_ids": list(entity_ids), "visited_ids": list(visited_ids), "lim": int(per_source_limit) * max(1, len(list(entity_ids)))},
+        {
+            "entity_ids": entity_ids_list,
+            "visited_ids": visited_ids_list,
+            "lim": int(per_source_limit) * max(1, len(entity_ids_list)),
+        },
     )
 
     triples: list[Triple] = []
@@ -576,6 +701,41 @@ class SpreadingActivation:
             out.append(t)
         return out
 
+    def _prefilter_triples(
+        self,
+        query: str,
+        triples: list[Triple],
+        source_activation: dict[str, float],
+        domain: str | None = None,
+    ) -> tuple[list[Triple], dict[str, Any]]:
+        """
+        Stage-A deterministic filter before LLM:
+        prioritize triples matching query intent and higher source activation.
+        """
+        if not triples:
+            return [], {"intent": "generic", "matched_relation_triples": 0}
+        intent = _infer_intent(query, domain=domain)
+        scored: list[tuple[float, Triple]] = []
+        matched = 0
+        for t in triples:
+            rel_sc = _relation_match_score(t.relation_type, t.relation_id, intent)
+            if rel_sc > 0:
+                matched += 1
+            src_sc = source_activation.get(t.source_id, 0.0)
+            # relation match dominates; activation breaks ties.
+            total = (rel_sc * 10.0) + (src_sc * 1.0)
+            scored.append((total, t))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        # Keep top subset; if no relation hits, retain broader coverage.
+        cap = max(24, min(len(scored), self.max_triples_per_round))
+        if matched > 0:
+            filtered = [t for s, t in scored[:cap] if s > 0]
+            if not filtered:
+                filtered = [t for _, t in scored[:cap]]
+        else:
+            filtered = [t for _, t in scored[:cap]]
+        return filtered, {"intent": intent["name"], "matched_relation_triples": matched, "prefilter_count": len(filtered)}
+
     def run(self, query: str, seed_entity_ids: list[str]) -> dict[str, Any]:
         visited: set[str] = set()
         subgraph: list[dict[str, Any]] = []
@@ -597,6 +757,7 @@ class SpreadingActivation:
             if not triples:
                 break
             triples = self._limit_triples(triples)
+            prefiltered_triples, prefilter_info = self._prefilter_triples(query, triples, activation)
 
             selected_triples: list[Triple]
             next_entities: list[str]
@@ -604,16 +765,16 @@ class SpreadingActivation:
 
             if score_selector is not None:
                 selected_triples, next_entities, target_scores = score_selector.select_with_source_activation(
-                    triples, activation, visited
+                    prefiltered_triples, activation, visited
                 )
             else:
                 # LLM (or other) selector: choose relevant triples, then next entities are the targets.
                 try:
-                    selected_triples = self.selector.select(query, triples)
+                    selected_triples = self.selector.select(query, prefiltered_triples)
                 except Exception:
                     # If the LLM call times out / fails, don't kill the whole run.
                     selected_triples, next_entities, target_scores = fallback_score_selector.select_with_source_activation(
-                        triples, activation, visited
+                        prefiltered_triples, activation, visited
                     )
                     used_fallback = True
                     if len(selected_triples) > self.max_triples_per_round:
@@ -629,6 +790,9 @@ class SpreadingActivation:
                             "round": round_idx + 1,
                             "current_entities": round_current,
                             "triples_considered": len(triples),
+                            "triples_prefiltered": prefilter_info["prefilter_count"],
+                            "intent": prefilter_info["intent"],
+                            "matched_relation_triples": prefilter_info["matched_relation_triples"],
                             "selected_triples": [t.as_dict() for t in selected_triples],
                             "next_entities": list(next_entities),
                             "selector_fallback_used": True,
@@ -643,7 +807,7 @@ class SpreadingActivation:
             if not selected_triples:
                 # LLM may answer "NONE" too aggressively; fall back to score-based selection for this round.
                 selected_triples, next_entities, target_scores = fallback_score_selector.select_with_source_activation(
-                    triples, activation, visited
+                    prefiltered_triples, activation, visited
                 )
                 used_fallback = True
                 if not selected_triples:
@@ -671,6 +835,9 @@ class SpreadingActivation:
                     "round": round_idx + 1,
                     "current_entities": round_current,
                     "triples_considered": len(triples),
+                    "triples_prefiltered": prefilter_info["prefilter_count"],
+                    "intent": prefilter_info["intent"],
+                    "matched_relation_triples": prefilter_info["matched_relation_triples"],
                     "selected_triples": [t.as_dict() for t in selected_triples],
                     "next_entities": list(next_entities),
                     "selector_fallback_used": bool(used_fallback),
@@ -685,6 +852,18 @@ class SpreadingActivation:
             "visited": sorted(visited),
             "subgraph": subgraph,
             "trace_rounds": trace_rounds,
+            "diagnostics": {
+                "seed_count": len(seed_entity_ids),
+                "visited_count": len(visited),
+                "subgraph_triple_count": len(subgraph),
+                "failure_reason": (
+                    "no_seeds"
+                    if not seed_entity_ids
+                    else "no_selected_triples"
+                    if not subgraph
+                    else None
+                ),
+            },
             "top_activated": [{"id": eid, "activation": score} for eid, score in top_activated],
         }
 
