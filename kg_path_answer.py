@@ -132,6 +132,44 @@ def _extract_director_and_location(question: str) -> tuple[str, str] | None:
     return _strip_possessive_suffix(m.group("dir")), _strip_possessive_suffix(m.group("loc"))
 
 
+_TWO_ACTORS_COMMON_FILM_RE = re.compile(
+    # "[A] ve [B]'[n]in her ikisinin de oynadığı ortak film hangisidir?"
+    # Also accepts: "her ikisinin de / birlikte oynadığı" / "ikisinin de"
+    # and: "... ikisinin de oynadığı film"
+    r"^(?P<a>.+?)\s+ve\s+(?P<b>.+?)\s*[''`]?(?:[a-z\u00e7\u011f\u0131\u00f6\u015f\u00fc]{1,4})?"
+    r"\s+(?:her\s+)?ikisin(?:in)?\s+de\s+oynad[\u0131i][g\u011f][\u0131iu\u00fc]"
+    r"\s+(?:ortak\s+)?film",
+    flags=re.IGNORECASE | re.UNICODE,
+)
+
+
+def _extract_two_actors_common_film(question: str) -> tuple[str, str] | None:
+    m = _TWO_ACTORS_COMMON_FILM_RE.search(question.strip())
+    if m:
+        return _strip_possessive_suffix(m.group("a")), _strip_possessive_suffix(m.group("b"))
+    return None
+
+
+_ACTOR_OYNADIGI_RE = re.compile(
+    # "[ACTOR]'ın oynadığı [FILM] filminin yönetmeni ..."
+    # The apostrophe+possessive suffix before "oynadığı" is the reliable anchor.
+    r"^(?P<actor>[^,]+?)\s*[''`]\s*(?:nin|n\u0131n|nun|n\u00fcn|in|\u0131n|un|\u00fcn)"
+    r"\s+oynadi[g\u011f][\u0131iu\u00fc]\s+(?P<film>.+?)\s+filmin",
+    flags=re.IGNORECASE | re.UNICODE,
+)
+
+
+def _extract_actor_and_film_oynadigi(question: str) -> tuple[str, str] | None:
+    """
+    "[ACTOR]'ın oynadığı [FILM] filminin yönetmeni ..."
+    Returns (actor_name, film_title).
+    """
+    m = _ACTOR_OYNADIGI_RE.search(question.strip())
+    if m:
+        return _strip_possessive_suffix(m.group("actor")), m.group("film").strip()
+    return None
+
+
 # ──────────────────────────────────────────────────────────
 # Question classification
 # ──────────────────────────────────────────────────────────
@@ -146,9 +184,14 @@ class QuestionIntent:
 
 
 def classify_question(question: str) -> QuestionIntent | None:
-    """Assign the question to one of the cinema templates."""
+    """Assign the question to one of the templates (cinema + sports)."""
     q = question.strip()
     ql = _fold(q)
+
+    # Sports-team questions (checked first so "takım" doesn't leak into film flow)
+    sports = classify_sports_question(question)
+    if sports:
+        return sports
 
     # Two films + common genre
     if ("ortak tur" in ql or "ortak türü" in ql or "common genre" in ql) and "film" in ql:
@@ -169,6 +212,44 @@ def classify_question(question: str) -> QuestionIntent | None:
             relation_path=("DIRECTOR_INVERSE", "NARRATIVE_LOCATION"),
             mentions={"director": d, "location": loc},
         )
+
+    # Two actors → common film
+    # "Ezgi Mola ve Çetin Tekindor'un her ikisinin de oynadığı ortak film hangisidir?"
+    if "oynad" in ql and ("ortak film" in ql or "ikisinin de oynad" in ql or "ikisinin oynad" in ql):
+        ab = _extract_two_actors_common_film(q)
+        if ab:
+            return QuestionIntent(
+                template="two_actors_common_film",
+                relation_path=("CAST_MEMBER_INVERSE",),
+                mentions={"actor1": ab[0], "actor2": ab[1]},
+            )
+
+    # ── Special case: "[ACTOR]'ın oynadığı [FILM] filminin yönetmeni nerede doğmuştur?" ──
+    # Must be checked BEFORE _extract_film_mentions, which would wrongly include
+    # the actor-name prefix in the film title.
+    _is_director_birth = (
+        # "yönetmeninin doğduğu [yer|şehir]" — possessive forms
+        "yonetmeninin dogdugu" in ql
+        or "yönetmeninin doğduğu" in ql
+        # "yönetmeni nerede doğdu/doğmuştur/doğmuş" — question forms
+        or ("yonetmeni nerede" in ql and ("dogdu" in ql or "dogmus" in ql))
+        or ("yönetmeni nerede" in ql and ("doğdu" in ql or "doğmuş" in ql))
+        # "yönetmeni nereden/nerelidir" — origin forms
+        or "yonetmeni nereden" in ql
+        or "yönetmeni nereden" in ql
+        or "yonetmeni nereli" in ql
+        or "yönetmeni nereli" in ql
+    )
+    if _is_director_birth:
+        # Try actor-disambiguation prefix first: "ACTOR'ın oynadığı FILM filminin ..."
+        af = _extract_actor_and_film_oynadigi(q)
+        if af:
+            actor_hint, film_title = af
+            return QuestionIntent(
+                template="film_director_birth",
+                relation_path=("DIRECTOR", "PLACE_OF_BIRTH"),
+                mentions={"film": film_title, "actor_hint": actor_hint},
+            )
 
     films = _extract_film_mentions(q)
     if not films:
@@ -192,7 +273,7 @@ def classify_question(question: str) -> QuestionIntent | None:
             mentions={"film": f, "actor": actor},
         )
 
-    if "yonetmeninin dogdugu" in ql or "yönetmeninin doğduğu" in ql:
+    if _is_director_birth:
         return QuestionIntent(
             template="film_director_birth",
             relation_path=("DIRECTOR", "PLACE_OF_BIRTH"),
@@ -204,6 +285,22 @@ def classify_question(question: str) -> QuestionIntent | None:
         return QuestionIntent(
             template="film_director_award",
             relation_path=("DIRECTOR", "AWARD_RECEIVED"),
+            mentions={"film": f},
+        )
+
+    # Simple one-hop: "… filminin yönetmeni kimdir?" / "yönetmen kim?"
+    # Intentionally checked AFTER the more specific director_birth/award templates.
+    if (
+        "yonetmeni kim" in ql
+        or "yönetmeni kim" in ql
+        or "yonetmen kim" in ql
+        or "yönetmen kim" in ql
+        or "yonetmeni kimdir" in ql
+        or "yönetmeni kimdir" in ql
+    ):
+        return QuestionIntent(
+            template="film_director",
+            relation_path=("DIRECTOR",),
             mentions={"film": f},
         )
 
@@ -238,12 +335,73 @@ def classify_question(question: str) -> QuestionIntent | None:
     return None
 
 
+# ── Sports-team templates ─────────────────────────────────────
+# Handled here as a separate classifier that runs before the film flow
+# (we don't want "takım" questions to try _extract_film_mentions).
+
+_TEAM_RE = re.compile(
+    # "[TEAM] takımının menajeri|teknik direktörü|koçu ..."
+    # "[TEAM] futbol takımının ..." / "[TEAM]'in ..."
+    r"^(?P<team>.+?)\s*[''`]?\s*(?:n[\u0131i]n|[\u0131i]n)?\s*(?:futbol\s+)?tak[\u0131i]m[\u0131i]",
+    flags=re.IGNORECASE | re.UNICODE,
+)
+
+
+def _extract_team_mention(question: str) -> str | None:
+    m = _TEAM_RE.search(question.strip())
+    if m:
+        raw = m.group("team").strip().rstrip("'`ʼ")
+        return _strip_possessive_suffix(raw)
+    return None
+
+
+def classify_sports_question(question: str) -> QuestionIntent | None:
+    q = question.strip()
+    ql = _fold(q)
+
+    is_team_q = "takim" in ql or "takım" in ql
+    if not is_team_q:
+        return None
+
+    team = _extract_team_mention(q)
+    if not team:
+        return None
+
+    # Who is the manager/head coach?
+    if (
+        "menajeri" in ql or "menajer" in ql
+        or "teknik direktoru" in ql or "teknik direktörü" in ql
+        or "koçu kim" in ql or "kocu kim" in ql
+        or "başantrenörü" in ql or "basantrenoru" in ql
+        or "antrenörü kim" in ql or "antrenoru kim" in ql
+        or "hocası kim" in ql or "hocasi kim" in ql
+    ):
+        return QuestionIntent(
+            template="team_coach",
+            relation_path=("HEAD_COACH",),
+            mentions={"team": team},
+        )
+
+    return None
+
+
 # ──────────────────────────────────────────────────────────
 # Entity resolution
 # ──────────────────────────────────────────────────────────
 
 _PERSON_TYPES = ("human", "person")
 _FILM_TYPES = ("film", "movie", "television film", "feature film", "motion picture")
+_SPORTS_TEAM_TYPES = (
+    "association football club",
+    "football club",
+    "association football team",
+    "football team",
+    "sports club",
+    "sports team",
+    "basketball team",
+    "multisport club",
+    "professional sports team",
+)
 _LOCATION_TYPES = (
     "city", "town", "country", "state", "municipality",
     "human settlement", "metropolis", "capital",
@@ -451,8 +609,28 @@ def resolve_entity(
         for r in _neo_exact_name(neo, stripped):
             _add(str(r["id"]), r.get("name") and str(r.get("name")), 95.0)
 
-    # 2) If we already have a strong match, skip the slower lookups
+    # 2) If we already have a strong match, skip the slower lookups.
+    # EXCEPT when the caller insists on a specific outgoing relation — in that
+    # case our exact matches may be irrelevant branches (e.g. "Galatasaray" exact-
+    # matches a magazine and a neighbourhood, while the football club lives
+    # under the alias "Galatasaray F.C." and only surfaces via fulltext).
     strong_match = any(c["src"] >= 95.0 for c in candidates.values())
+    if must_have_rel:
+        # Confirm one of the strong matches actually carries the relation. If
+        # not, we still need to run fulltext/alias to find candidates that do.
+        if strong_match:
+            strong_ids = [c["id"] for c in candidates.values() if c["src"] >= 95.0]
+            rows = neo.run(
+                """
+                UNWIND $ids AS id
+                MATCH (e:Entity {entityId:id})-[r]->()
+                WHERE type(r) IN $rts
+                RETURN id, count(r) AS c
+                """,
+                {"ids": strong_ids, "rts": [x.upper() for x in must_have_rel]},
+            )
+            if not any(int(r.get("c") or 0) > 0 for r in rows):
+                strong_match = False  # force fulltext/alias fall-through
 
     if not strong_match:
         # Fulltext once with the original mention
@@ -607,6 +785,162 @@ def resolve_entity(
     ):
         return None
     return str(top["id"])
+
+
+_YOUTH_TEAM_MARKERS = (
+    " a2", " a3", " b ", "(reserve", "reserve team",
+    "u-21", "u21", "u-19", "u19", "u-18", "u18", "u-17", "u17",
+    "youth", "academy", "junior",
+    "wheelchair",
+    "women", "women's", "women\u2019s",
+    "basketball", "volleyball", "handball", "volley",
+)
+# Canonical senior-club suffix patterns (ordered strong → weak)
+_SENIOR_CLUB_MARKERS = (
+    "f.c.", " fc", "s.k.", " sk", "j.k.", " jk", "a.ş.",
+    "football club", "football team",
+    "spor kulübü", "spor kulubu",
+)
+_TRSPOR_SUFFIXES = ("spor", "süpor", "gücü", "gucu", "birlik")
+
+
+def _resolve_main_sports_team(neo: Neo4jClient, mention: str) -> str | None:
+    """
+    Specialized resolver for "takım" (sports team) questions.
+
+    Strategy:
+      1. Gather candidates via exact / fulltext / alias / contains (same lookups
+         as resolve_entity, but without early-exit on strong_match).
+      2. Keep only candidates that actually have an outgoing HEAD_COACH edge.
+      3. Score each by:
+           + name similarity
+           + senior-club suffix boost (F.C./S.K./J.K./football club)
+           + penalty for youth/reserve/women/other-sport markers
+           + mild boost for Türkiye-country edge
+    """
+    if not mention or not mention.strip():
+        return None
+    mention = mention.strip(" ,.;:\"'“”‘’()[]")
+    if not mention:
+        return None
+
+    pool: dict[str, dict[str, Any]] = {}
+
+    def _add(eid: str, name: str | None):
+        if not eid:
+            return
+        if eid not in pool:
+            pool[eid] = {"id": eid, "name": name}
+        elif name and not pool[eid].get("name"):
+            pool[eid]["name"] = name
+
+    for r in _neo_exact_name(neo, mention, limit=40):
+        _add(str(r["id"]), r.get("name") and str(r["name"]))
+    for r in _neo_fulltext(neo, mention, limit=30):
+        _add(str(r["id"]), r.get("name") and str(r["name"]))
+    for eid in _alias_lookup(mention, limit=40):
+        _add(eid, None)
+    # Turkish sports-team suffixes are often glued to the city name
+    # ("Trabzonspor", "Antalyaspor"). Ensure we also try a CONTAINS match.
+    for r in _neo_contains(neo, mention, limit=80):
+        _add(str(r["id"]), r.get("name") and str(r["name"]))
+
+    if not pool:
+        return None
+
+    cand_ids = list(pool.keys())
+
+    # Fill names
+    missing = [eid for eid, c in pool.items() if not c.get("name")]
+    if missing:
+        rows = neo.run(
+            """
+            UNWIND $ids AS id
+            MATCH (e:Entity {entityId:id})
+            RETURN e.entityId AS id, e.name AS name
+            """,
+            {"ids": missing[:500]},
+        )
+        for r in rows:
+            c = pool.get(str(r["id"]))
+            if c and r.get("name"):
+                c["name"] = str(r["name"])
+
+    # Hard filter: HEAD_COACH must exist
+    rows = neo.run(
+        """
+        UNWIND $ids AS id
+        MATCH (e:Entity {entityId:id})-[:HEAD_COACH]->()
+        RETURN DISTINCT id
+        """,
+        {"ids": cand_ids[:1000]},
+    )
+    coach_set = {str(r["id"]) for r in rows}
+    if not coach_set:
+        return None
+
+    # Score
+    best_id: str | None = None
+    best_score = float("-inf")
+    for eid, c in pool.items():
+        if eid not in coach_set:
+            continue
+        name = (c.get("name") or "").strip()
+        ln = name.lower()
+        score = _score_candidate(mention, name)
+        # Reject season/history/list nodes outright
+        if any(tok in ln for tok in ("season", "history of", "list of")):
+            continue
+        # Senior-club suffix boost
+        for marker in _SENIOR_CLUB_MARKERS:
+            if marker in ln:
+                score += 40.0
+                break
+        # Turkish glued-suffix names like "Trabzonspor", "Antalyaspor"
+        if any(ln.endswith(s) for s in _TRSPOR_SUFFIXES):
+            score += 25.0
+        # Youth / reserve / women / other-sport penalty
+        for mk in _YOUTH_TEAM_MARKERS:
+            if mk in ln:
+                score -= 35.0
+        # Mild Türkiye boost
+        score += _turkiye_score(name) * 3.0
+        # Penalty for clearly wrong sub-entities (museum/magazine/tv/lyceum/university)
+        for bad in ("museum", "magazine", "lyceum", "university", "universite",
+                    "tv", "mobile", "islet", "(magazine)"):
+            if bad in ln:
+                score -= 60.0
+        if score > best_score:
+            best_score = score
+            best_id = eid
+
+    if not best_id:
+        return None
+
+    # Honesty check: if the only HEAD_COACH-bearing candidate is a youth/
+    # reserve/women's/other-sport branch but there is a clearly senior-team
+    # alternative in the pool (just without coach data), decline to answer
+    # rather than returning the wrong person.
+    best_name = (pool[best_id].get("name") or "").lower()
+    if any(mk in best_name for mk in _YOUTH_TEAM_MARKERS):
+        for eid, c in pool.items():
+            nm = (c.get("name") or "").lower()
+            if eid == best_id or not nm:
+                continue
+            if any(mk in nm for mk in _YOUTH_TEAM_MARKERS):
+                continue
+            if any(tok in nm for tok in ("season", "history of", "list of",
+                                         "rivalry", "museum", "magazine",
+                                         "lyceum", "university", "universite",
+                                         "tv", "mobile", "islet")):
+                continue
+            # Found a senior-looking alternative → data on main team is missing
+            if any(mk in nm for mk in _SENIOR_CLUB_MARKERS) or any(
+                nm.endswith(s) for s in _TRSPOR_SUFFIXES
+            ):
+                return None
+
+    return best_id
 
 
 # ──────────────────────────────────────────────────────────
@@ -914,6 +1248,92 @@ def kg_path_answer(neo: Neo4jClient, question: str) -> PathAnswer | None:
             alt_answers=alts,
         )
 
+    if intent.template == "team_coach":
+        team_mention = intent.mentions["team"]
+        team_id = _resolve_main_sports_team(neo, team_mention)
+        resolved = {"team": team_id}
+        if not team_id:
+            return None
+        coaches = _step(neo, [team_id], "HEAD_COACH", limit=50)
+        traces.append(coaches)
+        if not coaches:
+            return None
+        missing = [r["target_id"] for r in coaches if r.get("target_name") is None]
+        if missing:
+            names = _entity_names(neo, list(set(missing)))
+            for r in coaches:
+                if r.get("target_name") is None:
+                    r["target_name"] = names.get(r["target_id"])
+        pick = _pick_best_target(neo, coaches)
+        if not pick:
+            return None
+        alts = _uniq_answers(coaches)
+        answer_str = _compose_answer_string(pick, alts)
+        return PathAnswer(
+            template=intent.template,
+            answer=answer_str,
+            answer_id=str(pick["target_id"]),
+            relation_path=["HEAD_COACH"],
+            entity_path=[
+                {"id": team_id, "name": None},
+                {"id": str(pick["target_id"]), "name": pick.get("target_name")},
+            ],
+            traces=traces,
+            resolved_mentions=resolved,
+            alt_answers=alts,
+        )
+
+    if intent.template == "two_actors_common_film":
+        a1 = resolve_entity(neo, intent.mentions["actor1"], prefer_types=_PERSON_TYPES)
+        a2 = resolve_entity(
+            neo,
+            intent.mentions["actor2"],
+            prefer_types=_PERSON_TYPES,
+            excluded_ids=([a1] if a1 else []),
+        )
+        resolved = {"actor1": a1, "actor2": a2}
+        if not a1 or not a2:
+            return None
+        # Films whose :CAST_MEMBER points to each actor
+        f1 = _reverse_step(neo, [a1], "CAST_MEMBER", limit=500)
+        f2 = _reverse_step(neo, [a2], "CAST_MEMBER", limit=500)
+        traces = [f1, f2]
+        s1 = {r["source_id"] for r in f1}
+        s2 = {r["source_id"] for r in f2}
+        common = s1 & s2
+        if not common:
+            return None
+        # Prefer candidates that look like films (filter by _FILM_TYPES if possible)
+        common_rows = [r for r in f1 if r["source_id"] in common]
+        # Adapt shape to the target-style dicts used by _pick_best_target
+        target_rows = [
+            {"target_id": r["source_id"], "target_name": r.get("source_name")}
+            for r in common_rows
+        ]
+        # Bias toward Türkiye/film-typed entities
+        pick = _pick_best_target(neo, target_rows)
+        if not pick:
+            return None
+        alts = [
+            {"id": str(r["target_id"]), "name": (str(r.get("target_name") or ""))}
+            for r in target_rows
+        ]
+        answer_str = _compose_answer_string(pick, alts)
+        return PathAnswer(
+            template=intent.template,
+            answer=answer_str,
+            answer_id=str(pick["target_id"]),
+            relation_path=["CAST_MEMBER⁻¹ ∩ CAST_MEMBER⁻¹"],
+            entity_path=[
+                {"id": a1, "name": None},
+                {"id": a2, "name": None},
+                {"id": str(pick["target_id"]), "name": str(pick.get("target_name") or "")},
+            ],
+            traces=traces,
+            resolved_mentions=resolved,
+            alt_answers=alts,
+        )
+
     # Film-anchored templates
     if "film" in intent.mentions:
         film_name = intent.mentions["film"]
@@ -932,6 +1352,35 @@ def kg_path_answer(neo: Neo4jClient, question: str) -> PathAnswer | None:
             return None
 
         start_ids = [film_id]
+
+        # film_director_birth with actor_hint: use the actor to disambiguate the film,
+        # e.g. "Tülin Özen'in oynadığı Meleğin Düşüşü filminin yönetmeni nerede doğmuştur?"
+        if intent.template == "film_director_birth" and intent.mentions.get("actor_hint"):
+            actor_hint = intent.mentions["actor_hint"]
+            hint_id = resolve_entity(neo, actor_hint, prefer_types=_PERSON_TYPES)
+            if hint_id:
+                # Find films that have this actor as cast member and whose title
+                # matches the film mention.
+                actor_films = _reverse_step(neo, [hint_id], "CAST_MEMBER", limit=200)
+                if actor_films:
+                    folded_mention = _fold(film_name)
+                    best_film = None
+                    best_score = -1.0
+                    for r in actor_films:
+                        cand_name = r.get("source_name")
+                        if not cand_name:
+                            continue
+                        sc = _score_candidate(film_name, cand_name)
+                        if _fold(cand_name).startswith(folded_mention + " (") or _fold(cand_name) == folded_mention:
+                            sc += 60.0
+                        if sc > best_score:
+                            best_score = sc
+                            best_film = r
+                    if best_film and best_score >= 20.0:
+                        film_id = best_film["source_id"]
+                        resolved["film"] = film_id
+                        start_ids = [film_id]
+            resolved["actor_hint"] = hint_id
 
         # If there is an actor slot, use the first hop (CAST_MEMBER) but restrict to the actor.
         if intent.template == "film_actor_birth" or intent.template == "film_actor_birth_country":
