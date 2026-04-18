@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "note": "Illustrative metrics for the dashboard until you replace this file with results from aggregate_method_comparison.py (after running evaluation.py for each mode).",
+    "dataset": "neo4j_query_table_data_2026-4-16.json (or your QA JSON)",
+    "n_questions": 50
+  },
+  "methods": [
+    {
+      "name": "No-Retrieval",
+      "acc": 0.32,
+      "f1": 0.405,
+      "em": 0.18,
+      "recall": null
+    },
+    {
+      "name": "Vanilla RAG",
+      "acc": 0.48,
+      "f1": 0.548,
+      "em": 0.28,
+      "recall": null
+    },
+    {
+      "name": "Vanilla QE",
+      "acc": 0.52,
+      "f1": 0.581,
+      "em": 0.3,
+      "recall": null
+    },
+    {
+      "name": "KG-Infused RAG",
+      "acc": 0.68,
+      "f1": 0.721,
+      "em": 0.42,
+      "recall": 0.61
+    }
+  ]
+}

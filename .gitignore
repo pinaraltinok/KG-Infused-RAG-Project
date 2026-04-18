@@ -9,3 +9,7 @@ __pycache__/
 *.db
 *.db-wal
 *.db-shm
+
+# eval run outputs (regenerate locally; root method_comparison.json is for UI)
+outputs/*
+!outputs/.gitkeep

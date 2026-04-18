@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import random
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
@@ -14,7 +17,7 @@ class WikiPassage:
     snippet: str
 
 
-def _get_json(url: str, params: dict[str, Any], timeout_s: float = 20) -> dict[str, Any]:
+def _get_json(url: str, params: dict[str, Any], timeout_s: float = 25) -> dict[str, Any]:
     qs = urllib.parse.urlencode(params)
     full = f"{url}?{qs}"
     req = urllib.request.Request(
@@ -25,9 +28,25 @@ def _get_json(url: str, params: dict[str, Any], timeout_s: float = 20) -> dict[s
         },
         method="GET",
     )
-    with urllib.request.urlopen(req, timeout=timeout_s) as resp:
-        body = resp.read().decode("utf-8", errors="replace")
-    return json.loads(body)
+    last_exc: BaseException | None = None
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout_s) as resp:
+                body = resp.read().decode("utf-8", errors="replace")
+            return json.loads(body)
+        except (TimeoutError, OSError, urllib.error.URLError) as exc:
+            last_exc = exc
+            if attempt < 3:
+                time.sleep(0.9 * (2**attempt) + random.random() * 0.35)
+                continue
+        except urllib.error.HTTPError as exc:
+            last_exc = exc
+            if exc.code in (429, 503, 502, 500) and attempt < 3:
+                time.sleep(1.2 * (2**attempt) + random.random() * 0.5)
+                continue
+            raise
+    assert last_exc is not None
+    raise last_exc
 
 
 def wikipedia_search_passages(query: str, *, k: int = 6, lang: str = "en") -> list[WikiPassage]:

@@ -875,7 +875,9 @@ async function loadMethodComp(){
         <td class="mono">${m.recall!=null?m.recall.toFixed(3):'—'}</td>
       </tr>`;
     }).join('');
-    $('methodNote').textContent=d.available?`Source: ${d.source}`:(d.message||'No precomputed comparison file yet — run evaluation.py to generate one.');
+    const meta=(d.data&&d.data._meta)||{};
+    let note=d.available?`Source: ${d.source}`:(d.message||'No precomputed comparison file yet — run evaluation.py to generate one.');
+    if(meta.note)note=`${meta.note}${d.available?` · ${d.source}`:''}`;
   }catch(e){$('methodTbody').innerHTML=`<tr><td colspan="5" class="empty">${esc(e.message)}</td></tr>`}
 }
 

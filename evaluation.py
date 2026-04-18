@@ -114,10 +114,23 @@ def main() -> None:
     ap.add_argument("--entities-per-round", type=int, default=10)
     ap.add_argument("--domain", default=None)
     ap.add_argument("--out", default=None, help="Optional: write per-question outputs JSONL")
+    ap.add_argument(
+        "--write-summary",
+        default=None,
+        help="Optional: write aggregate metrics JSON (for aggregate_method_comparison.py)",
+    )
+    ap.add_argument(
+        "--max-questions",
+        type=int,
+        default=None,
+        help="Optional: evaluate only the first N questions after loading (default: all)",
+    )
     args = ap.parse_args()
 
     qpath = Path(args.questions)
     qs = load_questions(qpath)
+    if args.max_questions is not None and args.max_questions > 0:
+        qs = qs[: args.max_questions]
 
     rows: list[EvalRow] = []
     out_f = open(args.out, "w", encoding="utf-8") if args.out else None
@@ -187,13 +200,20 @@ def main() -> None:
     f1_avg = sum(r.f1 for r in rows) / len(rows)
     rr_avg = sum(r.retrieval_recall for r in rows) / len(rows)
 
-    print(
-        json.dumps(
-            {"mode": args.mode, "n": len(rows), "acc": acc, "em": em_avg, "f1": f1_avg, "retrieval_recall": rr_avg},
-            ensure_ascii=False,
-            indent=2,
+    summary = {
+        "mode": args.mode,
+        "n": len(rows),
+        "acc": acc,
+        "em": em_avg,
+        "f1": f1_avg,
+        "retrieval_recall": rr_avg,
+    }
+    if args.write_summary:
+        Path(args.write_summary).write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
         )
-    )
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
